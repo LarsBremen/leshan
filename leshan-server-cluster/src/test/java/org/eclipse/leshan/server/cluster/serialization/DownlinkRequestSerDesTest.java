@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2016 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -38,63 +38,63 @@ import com.eclipsesource.json.JsonObject;
 
 public class DownlinkRequestSerDesTest {
 
-    @Test
-    public void ser_and_des_read_request() throws Exception {
-        ser_and_des_are_equals(new ReadRequest(ContentFormat.TLV, 3, 0, 1));
-    }
+  @Test
+  public void ser_and_des_read_request() throws Exception {
+    ser_and_des_are_equals(new ReadRequest(ContentFormat.TLV, 3, 0, 1));
+  }
 
-    @Test
-    public void ser_and_des_execute_request() throws Exception {
-        ser_and_des_are_equals(new ExecuteRequest(3, 0, 1, "params"));
-    }
+  @Test
+  public void ser_and_des_execute_request() throws Exception {
+    ser_and_des_are_equals(new ExecuteRequest(3, 0, 1, "params"));
+  }
 
-    @Test
-    public void ser_and_des_delete_request() throws Exception {
-        ser_and_des_are_equals(new DeleteRequest(3, 0));
-    }
+  @Test
+  public void ser_and_des_delete_request() throws Exception {
+    ser_and_des_are_equals(new DeleteRequest(3, 0));
+  }
 
-    @Test
-    public void ser_and_des_discover_request() throws Exception {
-        ser_and_des_are_equals(new DiscoverRequest(3, 0, 1));
-    }
+  @Test
+  public void ser_and_des_discover_request() throws Exception {
+    ser_and_des_are_equals(new DiscoverRequest(3, 0, 1));
+  }
 
-    @Test
-    public void ser_and_des_observe_request() throws Exception {
-        ser_and_des_are_equals(new ObserveRequest(ContentFormat.TLV, 3, 0, 1));
-    }
+  @Test
+  public void ser_and_des_observe_request() throws Exception {
+    ser_and_des_are_equals(new ObserveRequest(ContentFormat.TLV, 3, 0, 1));
+  }
 
-    @Test
-    public void ser_and_des_write_request() throws Exception {
-        ser_and_des_are_equals(new WriteRequest(Mode.REPLACE, ContentFormat.TLV, 3, 0,
-                new LwM2mResource[] { LwM2mSingleResource.newStringResource(1, "value") }));
-    }
+  @Test
+  public void ser_and_des_write_request() throws Exception {
+    ser_and_des_are_equals(new WriteRequest(Mode.REPLACE, ContentFormat.TLV, 3, 0,
+        new LwM2mResource[]{LwM2mSingleResource.newStringResource(1, "value")}));
+  }
 
-    @Test
-    public void ser_and_des_create_request() throws Exception {
-        ser_and_des_are_equals(new CreateRequest(ContentFormat.TLV, 3,
-                new LwM2mResource[] { LwM2mSingleResource.newStringResource(1, "value") }));
-    }
+  @Test
+  public void ser_and_des_create_request() throws Exception {
+    ser_and_des_are_equals(new CreateRequest(ContentFormat.TLV, 3,
+        new LwM2mResource[]{LwM2mSingleResource.newStringResource(1, "value")}));
+  }
 
-    @Test
-    public void ser_and_des_write_attributes_request() throws Exception {
-        AttributeSet attributes = new AttributeSet(new Attribute(Attribute.MINIMUM_PERIOD, 10L),
-                new Attribute(Attribute.MAXIMUM_PERIOD, 60L));
-        ser_and_des_are_equals(new WriteAttributesRequest(3, 0, 1, attributes));
-    }
+  @Test
+  public void ser_and_des_write_attributes_request() throws Exception {
+    AttributeSet attributes = new AttributeSet(new Attribute(Attribute.MINIMUM_PERIOD, 10L),
+        new Attribute(Attribute.MAXIMUM_PERIOD, 60L));
+    ser_and_des_are_equals(new WriteAttributesRequest(3, 0, 1, attributes));
+  }
 
-    public void ser_and_des_are_equals(DownlinkRequest<?> request) throws Exception {
-        JsonObject ser = DownlinkRequestSerDes.jSerialize(request);
-        DownlinkRequest<?> r2 = DownlinkRequestSerDes.deserialize(ser);
-        assertEquals(request, r2);
-    }
+  public void ser_and_des_are_equals(DownlinkRequest<?> request) throws Exception {
+    JsonObject ser = DownlinkRequestSerDes.jSerialize(request);
+    DownlinkRequest<?> r2 = DownlinkRequestSerDes.deserialize(ser);
+    assertEquals(request, r2);
+  }
 
-    @Test
-    public void ser_and_des_read_request_then_compare_to_observe_request() throws Exception {
-        ReadRequest readRequest = new ReadRequest(ContentFormat.TLV, 3, 0, 1);
+  @Test
+  public void ser_and_des_read_request_then_compare_to_observe_request() throws Exception {
+    ReadRequest readRequest = new ReadRequest(ContentFormat.TLV, 3, 0, 1);
 
-        JsonObject ser = DownlinkRequestSerDes.jSerialize(readRequest);
-        DownlinkRequest<?> r2 = DownlinkRequestSerDes.deserialize(ser);
-        assertNotEquals(r2, new ObserveRequest(ContentFormat.TLV, 3, 0, 1));
-    }
+    JsonObject ser = DownlinkRequestSerDes.jSerialize(readRequest);
+    DownlinkRequest<?> r2 = DownlinkRequestSerDes.deserialize(ser);
+    assertNotEquals(r2, new ObserveRequest(ContentFormat.TLV, 3, 0, 1));
+  }
 
 }

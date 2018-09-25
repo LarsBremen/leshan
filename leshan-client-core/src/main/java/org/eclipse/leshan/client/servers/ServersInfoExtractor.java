@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *     Achim Kraus (Bosch Software Innovations GmbH) - use ServerIdentity.SYSTEM
@@ -44,147 +44,157 @@ import org.slf4j.LoggerFactory;
  * Extract from LwM2m tree servers information like server uri, security mode, ...
  */
 public class ServersInfoExtractor {
-    private static final Logger LOG = LoggerFactory.getLogger(ServersInfoExtractor.class);
 
-    public static ServersInfo getInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers) {
-        LwM2mObjectEnabler securityEnabler = objectEnablers.get(SECURITY);
-        LwM2mObjectEnabler serverEnabler = objectEnablers.get(SERVER);
+  private static final Logger LOG = LoggerFactory.getLogger(ServersInfoExtractor.class);
 
-        if (securityEnabler == null || serverEnabler == null)
-            return null;
+  public static ServersInfo getInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers) {
+    LwM2mObjectEnabler securityEnabler = objectEnablers.get(SECURITY);
+    LwM2mObjectEnabler serverEnabler = objectEnablers.get(SERVER);
 
-        ServersInfo infos = new ServersInfo();
-        LwM2mObject securities = (LwM2mObject) securityEnabler.read(SYSTEM, new ReadRequest(SECURITY)).getContent();
-        LwM2mObject servers = (LwM2mObject) serverEnabler.read(SYSTEM, new ReadRequest(SERVER)).getContent();
+    if (securityEnabler == null || serverEnabler == null) {
+      return null;
+    }
 
-        for (LwM2mObjectInstance security : securities.getInstances().values()) {
-            try {
-                if ((boolean) security.getResource(SEC_BOOTSTRAP).getValue()) {
-                    if (infos.bootstrap != null) {
-                        LOG.warn("There is more than one bootstrap configuration in security object.");
-                    } else {
-                        // create bootstrap info
-                        ServerInfo info = new ServerInfo();
-                        LwM2mResource serverIdResource = security.getResource(SEC_SERVER_ID);
-                        if (serverIdResource != null && serverIdResource.getValue() != null)
-                            info.serverId = (long) serverIdResource.getValue();
-                        else
-                            info.serverId = 0;
-                        info.serverUri = new URI((String) security.getResource(SEC_SERVER_URI).getValue());
-                        info.secureMode = getSecurityMode(security);
-                        if (info.secureMode == SecurityMode.PSK) {
-                            info.pskId = getPskIdentity(security);
-                            info.pskKey = getPskKey(security);
-                        } else if (info.secureMode == SecurityMode.RPK) {
-                            info.publicKey = getPublicKey(security);
-                            info.privateKey = getPrivateKey(security);
-                            info.serverPublicKey = getServerPublicKey(security);
-                        }
-                        infos.bootstrap = info;
-                    }
-                } else {
-                    // create device management info
-                    DmServerInfo info = new DmServerInfo();
-                    info.serverUri = new URI((String) security.getResource(SEC_SERVER_URI).getValue());
-                    info.serverId = (long) security.getResource(SEC_SERVER_ID).getValue();
-                    info.secureMode = getSecurityMode(security);
-                    if (info.secureMode == SecurityMode.PSK) {
-                        info.pskId = getPskIdentity(security);
-                        info.pskKey = getPskKey(security);
-                    } else if (info.secureMode == SecurityMode.RPK) {
-                        info.publicKey = getPublicKey(security);
-                        info.privateKey = getPrivateKey(security);
-                        info.serverPublicKey = getServerPublicKey(security);
-                    }
-                    // search corresponding device management server
-                    for (LwM2mObjectInstance server : servers.getInstances().values()) {
-                        if (info.serverId == (Long) server.getResource(SRV_SERVER_ID).getValue()) {
-                            info.lifetime = (long) server.getResource(SRV_LIFETIME).getValue();
-                            info.binding = BindingMode.valueOf((String) server.getResource(SRV_BINDING).getValue());
+    ServersInfo infos = new ServersInfo();
+    LwM2mObject securities = (LwM2mObject) securityEnabler.read(SYSTEM, new ReadRequest(SECURITY))
+        .getContent();
+    LwM2mObject servers = (LwM2mObject) serverEnabler.read(SYSTEM, new ReadRequest(SERVER))
+        .getContent();
 
-                            infos.deviceMangements.put(info.serverId, info);
-                            break;
-                        }
-                    }
-                }
-            } catch (URISyntaxException e) {
-                LOG.error(String.format("Invalid URI %s", (String) security.getResource(SEC_SERVER_URI).getValue()), e);
+    for (LwM2mObjectInstance security : securities.getInstances().values()) {
+      try {
+        if ((boolean) security.getResource(SEC_BOOTSTRAP).getValue()) {
+          if (infos.bootstrap != null) {
+            LOG.warn("There is more than one bootstrap configuration in security object.");
+          } else {
+            // create bootstrap info
+            ServerInfo info = new ServerInfo();
+            LwM2mResource serverIdResource = security.getResource(SEC_SERVER_ID);
+            if (serverIdResource != null && serverIdResource.getValue() != null) {
+              info.serverId = (long) serverIdResource.getValue();
+            } else {
+              info.serverId = 0;
             }
+            info.serverUri = new URI((String) security.getResource(SEC_SERVER_URI).getValue());
+            info.secureMode = getSecurityMode(security);
+            if (info.secureMode == SecurityMode.PSK) {
+              info.pskId = getPskIdentity(security);
+              info.pskKey = getPskKey(security);
+            } else if (info.secureMode == SecurityMode.RPK) {
+              info.publicKey = getPublicKey(security);
+              info.privateKey = getPrivateKey(security);
+              info.serverPublicKey = getServerPublicKey(security);
+            }
+            infos.bootstrap = info;
+          }
+        } else {
+          // create device management info
+          DmServerInfo info = new DmServerInfo();
+          info.serverUri = new URI((String) security.getResource(SEC_SERVER_URI).getValue());
+          info.serverId = (long) security.getResource(SEC_SERVER_ID).getValue();
+          info.secureMode = getSecurityMode(security);
+          if (info.secureMode == SecurityMode.PSK) {
+            info.pskId = getPskIdentity(security);
+            info.pskKey = getPskKey(security);
+          } else if (info.secureMode == SecurityMode.RPK) {
+            info.publicKey = getPublicKey(security);
+            info.privateKey = getPrivateKey(security);
+            info.serverPublicKey = getServerPublicKey(security);
+          }
+          // search corresponding device management server
+          for (LwM2mObjectInstance server : servers.getInstances().values()) {
+            if (info.serverId == (Long) server.getResource(SRV_SERVER_ID).getValue()) {
+              info.lifetime = (long) server.getResource(SRV_LIFETIME).getValue();
+              info.binding = BindingMode
+                  .valueOf((String) server.getResource(SRV_BINDING).getValue());
+
+              infos.deviceMangements.put(info.serverId, info);
+              break;
+            }
+          }
         }
-        return infos;
+      } catch (URISyntaxException e) {
+        LOG.error(String
+            .format("Invalid URI %s", (String) security.getResource(SEC_SERVER_URI).getValue()), e);
+      }
+    }
+    return infos;
+  }
+
+  public static DmServerInfo getDMServerInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers,
+      Long shortID) {
+    ServersInfo info = getInfo(objectEnablers);
+    if (info == null) {
+      return null;
     }
 
-    public static DmServerInfo getDMServerInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers, Long shortID) {
-        ServersInfo info = getInfo(objectEnablers);
-        if (info == null)
-            return null;
+    return info.deviceMangements.get(shortID);
+  }
 
-        return info.deviceMangements.get(shortID);
+  public static ServerInfo getBootstrapServerInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers) {
+    ServersInfo info = getInfo(objectEnablers);
+    if (info == null) {
+      return null;
     }
 
-    public static ServerInfo getBootstrapServerInfo(Map<Integer, LwM2mObjectEnabler> objectEnablers) {
-        ServersInfo info = getInfo(objectEnablers);
-        if (info == null)
-            return null;
+    return info.bootstrap;
+  }
 
-        return info.bootstrap;
-    }
+  public static SecurityMode getSecurityMode(LwM2mObjectInstance securityInstance) {
+    return SecurityMode.fromCode((long) securityInstance.getResource(SEC_SECURITY_MODE).getValue());
+  }
 
-    public static SecurityMode getSecurityMode(LwM2mObjectInstance securityInstance) {
-        return SecurityMode.fromCode((long) securityInstance.getResource(SEC_SECURITY_MODE).getValue());
-    }
+  public static String getPskIdentity(LwM2mObjectInstance securityInstance) {
+    byte[] pubKey = (byte[]) securityInstance.getResource(SEC_PUBKEY_IDENTITY).getValue();
+    return new String(pubKey);
+  }
 
-    public static String getPskIdentity(LwM2mObjectInstance securityInstance) {
-        byte[] pubKey = (byte[]) securityInstance.getResource(SEC_PUBKEY_IDENTITY).getValue();
-        return new String(pubKey);
-    }
+  public static byte[] getPskKey(LwM2mObjectInstance securityInstance) {
+    return (byte[]) securityInstance.getResource(SEC_SECRET_KEY).getValue();
+  }
 
-    public static byte[] getPskKey(LwM2mObjectInstance securityInstance) {
-        return (byte[]) securityInstance.getResource(SEC_SECRET_KEY).getValue();
+  private static PublicKey getPublicKey(LwM2mObjectInstance securityInstance) {
+    byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_PUBKEY_IDENTITY).getValue();
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encodedKey);
+    String algorithm = "EC";
+    try {
+      KeyFactory kf = KeyFactory.getInstance(algorithm);
+      return kf.generatePublic(keySpec);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.debug("Failed to instantiate key factory for algorithm " + algorithm, e);
+    } catch (InvalidKeySpecException e) {
+      LOG.debug("Failed to decode RFC7250 public key with algorithm " + algorithm, e);
     }
+    return null;
+  }
 
-    private static PublicKey getPublicKey(LwM2mObjectInstance securityInstance) {
-        byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_PUBKEY_IDENTITY).getValue();
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encodedKey);
-        String algorithm = "EC";
-        try {
-            KeyFactory kf = KeyFactory.getInstance(algorithm);
-            return kf.generatePublic(keySpec);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.debug("Failed to instantiate key factory for algorithm " + algorithm, e);
-        } catch (InvalidKeySpecException e) {
-            LOG.debug("Failed to decode RFC7250 public key with algorithm " + algorithm, e);
-        }
-        return null;
+  private static PrivateKey getPrivateKey(LwM2mObjectInstance securityInstance) {
+    byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_SECRET_KEY).getValue();
+    PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encodedKey);
+    String algorithm = "EC";
+    try {
+      KeyFactory kf = KeyFactory.getInstance(algorithm);
+      return kf.generatePrivate(keySpec);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.warn("Failed to instantiate key factory for algorithm " + algorithm, e);
+    } catch (InvalidKeySpecException e) {
+      LOG.warn("Failed to decode RFC5958 private key with algorithm " + algorithm, e);
     }
+    return null;
+  }
 
-    private static PrivateKey getPrivateKey(LwM2mObjectInstance securityInstance) {
-        byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_SECRET_KEY).getValue();
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encodedKey);
-        String algorithm = "EC";
-        try {
-            KeyFactory kf = KeyFactory.getInstance(algorithm);
-            return kf.generatePrivate(keySpec);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.warn("Failed to instantiate key factory for algorithm " + algorithm, e);
-        } catch (InvalidKeySpecException e) {
-            LOG.warn("Failed to decode RFC5958 private key with algorithm " + algorithm, e);
-        }
-        return null;
+  private static PublicKey getServerPublicKey(LwM2mObjectInstance securityInstance) {
+    byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_SERVER_PUBKEY).getValue();
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encodedKey);
+    String algorithm = "EC";
+    try {
+      KeyFactory kf = KeyFactory.getInstance(algorithm);
+      return kf.generatePublic(keySpec);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.debug("Failed to instantiate key factory for algorithm " + algorithm, e);
+    } catch (InvalidKeySpecException e) {
+      LOG.debug("Failed to decode RFC7250 public key with algorithm " + algorithm, e);
     }
-
-    private static PublicKey getServerPublicKey(LwM2mObjectInstance securityInstance) {
-        byte[] encodedKey = (byte[]) securityInstance.getResource(SEC_SERVER_PUBKEY).getValue();
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encodedKey);
-        String algorithm = "EC";
-        try {
-            KeyFactory kf = KeyFactory.getInstance(algorithm);
-            return kf.generatePublic(keySpec);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.debug("Failed to instantiate key factory for algorithm " + algorithm, e);
-        } catch (InvalidKeySpecException e) {
-            LOG.debug("Failed to decode RFC7250 public key with algorithm " + algorithm, e);
-        }
-        return null;
-    }
+    return null;
+  }
 }

@@ -21,28 +21,29 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Implementation of {@link ThreadFactory} that sets thread names according to given name format. All threads are
- * created by {@link Executors#defaultThreadFactory() #newThread(Runnable)}.
+ * Implementation of {@link ThreadFactory} that sets thread names according to given name format.
+ * All threads are created by {@link Executors#defaultThreadFactory() #newThread(Runnable)}.
  */
 public final class NamedThreadFactory implements ThreadFactory {
-    private final String nameFormat;
-    private final AtomicLong counter = new AtomicLong();
 
-    /**
-     * Creates a new {@link NamedThreadFactory}.
-     * 
-     * @param nameFormat result of {@link String#format(String, Object...)} with this format and unique counter will be
-     *        used for thread name. Example: format of {@code xyz-%d} will result in thread names {@code xyz-1},
-     *        {@code xyz-2} etc.
-     */
-    public NamedThreadFactory(final String nameFormat) {
-        this.nameFormat = nameFormat;
-    }
+  private final String nameFormat;
+  private final AtomicLong counter = new AtomicLong();
 
-    @Override
-    public Thread newThread(final Runnable r) {
-        final Thread thread = Executors.defaultThreadFactory().newThread(r);
-        thread.setName(String.format(nameFormat, counter.getAndIncrement()));
-        return thread;
-    }
+  /**
+   * Creates a new {@link NamedThreadFactory}.
+   *
+   * @param nameFormat result of {@link String#format(String, Object...)} with this format and
+   * unique counter will be used for thread name. Example: format of {@code xyz-%d} will result in
+   * thread names {@code xyz-1}, {@code xyz-2} etc.
+   */
+  public NamedThreadFactory(final String nameFormat) {
+    this.nameFormat = nameFormat;
+  }
+
+  @Override
+  public Thread newThread(final Runnable r) {
+    final Thread thread = Executors.defaultThreadFactory().newThread(r);
+    thread.setName(String.format(nameFormat, counter.getAndIncrement()));
+    return thread;
+  }
 }

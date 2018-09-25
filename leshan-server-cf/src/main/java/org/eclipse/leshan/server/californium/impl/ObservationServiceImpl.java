@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2016 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -51,243 +51,263 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of the {@link ObservationService} accessing the persisted observation via the provided
- * {@link CaliforniumRegistrationStore}.
- * 
+ * Implementation of the {@link ObservationService} accessing the persisted observation via the
+ * provided {@link CaliforniumRegistrationStore}.
+ *
  * When a new observation is added or changed or canceled, the registered listeners are notified.
  */
 public class ObservationServiceImpl implements ObservationService, NotificationListener {
 
-    private final Logger LOG = LoggerFactory.getLogger(ObservationServiceImpl.class);
+  private final Logger LOG = LoggerFactory.getLogger(ObservationServiceImpl.class);
 
-    private final CaliforniumRegistrationStore registrationStore;
-    private final LwM2mModelProvider modelProvider;
-    private final LwM2mNodeDecoder decoder;
-    private Endpoint secureEndpoint;
-    private Endpoint nonSecureEndpoint;
+  private final CaliforniumRegistrationStore registrationStore;
+  private final LwM2mModelProvider modelProvider;
+  private final LwM2mNodeDecoder decoder;
+  private Endpoint secureEndpoint;
+  private Endpoint nonSecureEndpoint;
 
-    private final List<ObservationListener> listeners = new CopyOnWriteArrayList<>();
+  private final List<ObservationListener> listeners = new CopyOnWriteArrayList<>();
 
-    /**
-     * Creates an instance of {@link ObservationServiceImpl}
-     * 
-     * @param store instance of californium's {@link ObservationStore}
-     * @param modelProvider instance of {@link LwM2mModelProvider}
-     * @param decoder instance of {@link LwM2mNodeDecoder}
-     */
-    public ObservationServiceImpl(CaliforniumRegistrationStore store, LwM2mModelProvider modelProvider,
-            LwM2mNodeDecoder decoder) {
-        this.registrationStore = store;
-        this.modelProvider = modelProvider;
-        this.decoder = decoder;
+  /**
+   * Creates an instance of {@link ObservationServiceImpl}
+   *
+   * @param store instance of californium's {@link ObservationStore}
+   * @param modelProvider instance of {@link LwM2mModelProvider}
+   * @param decoder instance of {@link LwM2mNodeDecoder}
+   */
+  public ObservationServiceImpl(CaliforniumRegistrationStore store,
+      LwM2mModelProvider modelProvider,
+      LwM2mNodeDecoder decoder) {
+    this.registrationStore = store;
+    this.modelProvider = modelProvider;
+    this.decoder = decoder;
+  }
+
+  public void addObservation(Registration registration, Observation observation) {
+    for (Observation existing : registrationStore
+        .addObservation(registration.getId(), observation)) {
+      cancel(existing);
     }
 
-    public void addObservation(Registration registration, Observation observation) {
-        for (Observation existing : registrationStore.addObservation(registration.getId(), observation)) {
-            cancel(existing);
-        }
+    for (ObservationListener listener : listeners) {
+      listener.newObservation(observation, registration);
+    }
+  }
 
-        for (ObservationListener listener : listeners) {
-            listener.newObservation(observation, registration);
-        }
+  public void setNonSecureEndpoint(Endpoint endpoint) {
+    nonSecureEndpoint = endpoint;
+  }
+
+  public void setSecureEndpoint(Endpoint endpoint) {
+    secureEndpoint = endpoint;
+  }
+
+  @Override
+  public int cancelObservations(Registration registration) {
+    // check registration id
+    String registrationId = registration.getId();
+    if (registrationId == null) {
+      return 0;
     }
 
-    public void setNonSecureEndpoint(Endpoint endpoint) {
-        nonSecureEndpoint = endpoint;
+    Collection<Observation> observations = registrationStore.removeObservations(registrationId);
+    if (observations == null) {
+      return 0;
     }
 
-    public void setSecureEndpoint(Endpoint endpoint) {
-        secureEndpoint = endpoint;
+    for (Observation observation : observations) {
+      cancel(observation);
     }
 
-    @Override
-    public int cancelObservations(Registration registration) {
-        // check registration id
-        String registrationId = registration.getId();
-        if (registrationId == null)
-            return 0;
+    return observations.size();
+  }
 
-        Collection<Observation> observations = registrationStore.removeObservations(registrationId);
-        if (observations == null)
-            return 0;
-
-        for (Observation observation : observations) {
-            cancel(observation);
-        }
-
-        return observations.size();
+  @Override
+  public int cancelObservations(Registration registration, String resourcepath) {
+    if (registration == null || registration.getId() == null || resourcepath == null || resourcepath
+        .isEmpty()) {
+      return 0;
     }
 
-    @Override
-    public int cancelObservations(Registration registration, String resourcepath) {
-        if (registration == null || registration.getId() == null || resourcepath == null || resourcepath.isEmpty())
-            return 0;
+    Set<Observation> observations = getObservations(registration.getId(), resourcepath);
+    for (Observation observation : observations) {
+      cancelObservation(observation);
+    }
+    return observations.size();
+  }
 
-        Set<Observation> observations = getObservations(registration.getId(), resourcepath);
-        for (Observation observation : observations) {
-            cancelObservation(observation);
-        }
-        return observations.size();
+  @Override
+  public void cancelObservation(Observation observation) {
+    if (observation == null) {
+      return;
     }
 
-    @Override
-    public void cancelObservation(Observation observation) {
-        if (observation == null)
-            return;
+    registrationStore.removeObservation(observation.getRegistrationId(), observation.getId());
+    cancel(observation);
+  }
 
-        registrationStore.removeObservation(observation.getRegistrationId(), observation.getId());
-        cancel(observation);
+  private void cancel(Observation observation) {
+    Token token = new Token(observation.getId());
+    if (secureEndpoint != null) {
+      secureEndpoint.cancelObservation(token);
+    }
+    if (nonSecureEndpoint != null) {
+      nonSecureEndpoint.cancelObservation(token);
     }
 
-    private void cancel(Observation observation) {
-        Token token = new Token(observation.getId());
-        if (secureEndpoint != null)
-            secureEndpoint.cancelObservation(token);
-        if (nonSecureEndpoint != null)
-            nonSecureEndpoint.cancelObservation(token);
+    for (ObservationListener listener : listeners) {
+      listener.cancelled(observation);
+    }
+  }
 
-        for (ObservationListener listener : listeners) {
-            listener.cancelled(observation);
-        }
+  @Override
+  public Set<Observation> getObservations(Registration registration) {
+    return getObservations(registration.getId());
+  }
+
+  private Set<Observation> getObservations(String registrationId) {
+    if (registrationId == null) {
+      return Collections.emptySet();
     }
 
-    @Override
-    public Set<Observation> getObservations(Registration registration) {
-        return getObservations(registration.getId());
+    return new HashSet<>(registrationStore.getObservations(registrationId));
+  }
+
+  private Set<Observation> getObservations(String registrationId, String resourcePath) {
+    if (registrationId == null || resourcePath == null) {
+      return Collections.emptySet();
     }
 
-    private Set<Observation> getObservations(String registrationId) {
-        if (registrationId == null)
-            return Collections.emptySet();
+    Set<Observation> result = new HashSet<>();
+    LwM2mPath lwPath = new LwM2mPath(resourcePath);
+    for (Observation obs : getObservations(registrationId)) {
+      if (lwPath.equals(obs.getPath())) {
+        result.add(obs);
+      }
+    }
+    return result;
+  }
 
-        return new HashSet<>(registrationStore.getObservations(registrationId));
+  /**
+   * @return the Californium {@link ObservationStore}
+   */
+  public ObservationStore getObservationStore() {
+    return registrationStore;
+  }
+
+  @Override
+  public void addListener(ObservationListener listener) {
+    listeners.add(listener);
+  }
+
+  @Override
+  public void removeListener(ObservationListener listener) {
+    listeners.remove(listener);
+  }
+
+  // ********** NotificationListener interface **********//
+
+  @Override
+  public void onNotification(Request coapRequest, Response coapResponse) {
+    LOG.trace("notification received for request {}: {}", coapRequest, coapResponse);
+
+    if (listeners.isEmpty()) {
+      return;
     }
 
-    private Set<Observation> getObservations(String registrationId, String resourcePath) {
-        if (registrationId == null || resourcePath == null)
-            return Collections.emptySet();
+    // get registration Id
+    String regid = coapRequest.getUserContext().get(ObserveUtil.CTX_REGID);
 
-        Set<Observation> result = new HashSet<>();
-        LwM2mPath lwPath = new LwM2mPath(resourcePath);
-        for (Observation obs : getObservations(registrationId)) {
-            if (lwPath.equals(obs.getPath())) {
-                result.add(obs);
-            }
-        }
-        return result;
+    // get observation for this request
+    Observation observation = registrationStore
+        .getObservation(regid, coapResponse.getToken().getBytes());
+    if (observation == null) {
+      LOG.error("Unexpected error: Unable to find observation with token {} for registration {}",
+          coapResponse.getToken(), regid);
+      return;
     }
 
-    /**
-     * @return the Californium {@link ObservationStore}
-     */
-    public ObservationStore getObservationStore() {
-        return registrationStore;
+    // get registration
+    Registration registration = registrationStore.getRegistration(observation.getRegistrationId());
+    if (registration == null) {
+      LOG.error("Unexpected error: There is no registration with id {} for this observation {}",
+          observation.getRegistrationId(), observation);
+      return;
     }
 
-    @Override
-    public void addListener(ObservationListener listener) {
-        listeners.add(listener);
+    try {
+      // get model for this registration
+      LwM2mModel model = modelProvider.getObjectModel(registration);
+
+      // create response
+      ObserveResponse response = createObserveResponse(observation, model, coapResponse);
+
+      // notify all listeners
+      for (ObservationListener listener : listeners) {
+        listener.onResponse(observation, registration, response);
+      }
+    } catch (InvalidResponseException e) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug(String.format("Invalid notification for observation [%s]", observation), e);
+      }
+
+      for (ObservationListener listener : listeners) {
+        listener.onError(observation, registration, e);
+      }
+    } catch (RuntimeException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error(String.format("Unable to handle notification for observation [%s]", observation),
+            e);
+      }
+
+      for (ObservationListener listener : listeners) {
+        listener.onError(observation, registration, e);
+      }
     }
 
-    @Override
-    public void removeListener(ObservationListener listener) {
-        listeners.remove(listener);
+  }
+
+  private ObserveResponse createObserveResponse(Observation observation, LwM2mModel model,
+      Response coapResponse) {
+    // CHANGED response is supported for backward compatibility with old spec.
+    if (coapResponse.getCode() != CoAP.ResponseCode.CHANGED
+        && coapResponse.getCode() != CoAP.ResponseCode.CONTENT) {
+      throw new InvalidResponseException("Unexpected response code [%s] for %s",
+          coapResponse.getCode(),
+          observation);
     }
 
-    // ********** NotificationListener interface **********//
-
-    @Override
-    public void onNotification(Request coapRequest, Response coapResponse) {
-        LOG.trace("notification received for request {}: {}", coapRequest, coapResponse);
-
-        if (listeners.isEmpty())
-            return;
-
-        // get registration Id
-        String regid = coapRequest.getUserContext().get(ObserveUtil.CTX_REGID);
-
-        // get observation for this request
-        Observation observation = registrationStore.getObservation(regid, coapResponse.getToken().getBytes());
-        if (observation == null) {
-            LOG.error("Unexpected error: Unable to find observation with token {} for registration {}",
-                    coapResponse.getToken(), regid);
-            return;
-        }
-
-        // get registration
-        Registration registration = registrationStore.getRegistration(observation.getRegistrationId());
-        if (registration == null) {
-            LOG.error("Unexpected error: There is no registration with id {} for this observation {}",
-                    observation.getRegistrationId(), observation);
-            return;
-        }
-
-        try {
-            // get model for this registration
-            LwM2mModel model = modelProvider.getObjectModel(registration);
-
-            // create response
-            ObserveResponse response = createObserveResponse(observation, model, coapResponse);
-
-            // notify all listeners
-            for (ObservationListener listener : listeners) {
-                listener.onResponse(observation, registration, response);
-            }
-        } catch (InvalidResponseException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Invalid notification for observation [%s]", observation), e);
-            }
-
-            for (ObservationListener listener : listeners) {
-                listener.onError(observation, registration, e);
-            }
-        } catch (RuntimeException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Unable to handle notification for observation [%s]", observation), e);
-            }
-
-            for (ObservationListener listener : listeners) {
-                listener.onError(observation, registration, e);
-            }
-        }
-
+    // get content format
+    ContentFormat contentFormat = null;
+    if (coapResponse.getOptions().hasContentFormat()) {
+      contentFormat = ContentFormat.fromCode(coapResponse.getOptions().getContentFormat());
     }
 
-    private ObserveResponse createObserveResponse(Observation observation, LwM2mModel model, Response coapResponse) {
-        // CHANGED response is supported for backward compatibility with old spec.
-        if (coapResponse.getCode() != CoAP.ResponseCode.CHANGED
-                && coapResponse.getCode() != CoAP.ResponseCode.CONTENT) {
-            throw new InvalidResponseException("Unexpected response code [%s] for %s", coapResponse.getCode(),
-                    observation);
-        }
+    // decode response
+    try {
+      List<TimestampedLwM2mNode> timestampedNodes = decoder
+          .decodeTimestampedData(coapResponse.getPayload(),
+              contentFormat, observation.getPath(), model);
 
-        // get content format
-        ContentFormat contentFormat = null;
-        if (coapResponse.getOptions().hasContentFormat()) {
-            contentFormat = ContentFormat.fromCode(coapResponse.getOptions().getContentFormat());
-        }
-
-        // decode response
-        try {
-            List<TimestampedLwM2mNode> timestampedNodes = decoder.decodeTimestampedData(coapResponse.getPayload(),
-                    contentFormat, observation.getPath(), model);
-
-            // create lwm2m response
-            if (timestampedNodes.size() == 1 && !timestampedNodes.get(0).isTimestamped()) {
-                return new ObserveResponse(toLwM2mResponseCode(coapResponse.getCode()),
-                        timestampedNodes.get(0).getNode(), null, observation, null, coapResponse);
-            } else {
-                return new ObserveResponse(toLwM2mResponseCode(coapResponse.getCode()), null, timestampedNodes,
-                        observation, null, coapResponse);
-            }
-        } catch (CodecException e) {
-            if (LOG.isDebugEnabled()) {
-                byte[] payload = coapResponse.getPayload() == null ? new byte[0] : coapResponse.getPayload();
-                LOG.debug(String.format("Unable to decode notification payload [%s] of observation [%s] ",
-                        Hex.encodeHexString(payload), observation), e);
-            }
-            throw new InvalidResponseException(e, "Unable to decode notification payload  of observation [%s] ",
-                    observation);
-        }
+      // create lwm2m response
+      if (timestampedNodes.size() == 1 && !timestampedNodes.get(0).isTimestamped()) {
+        return new ObserveResponse(toLwM2mResponseCode(coapResponse.getCode()),
+            timestampedNodes.get(0).getNode(), null, observation, null, coapResponse);
+      } else {
+        return new ObserveResponse(toLwM2mResponseCode(coapResponse.getCode()), null,
+            timestampedNodes,
+            observation, null, coapResponse);
+      }
+    } catch (CodecException e) {
+      if (LOG.isDebugEnabled()) {
+        byte[] payload =
+            coapResponse.getPayload() == null ? new byte[0] : coapResponse.getPayload();
+        LOG.debug(String.format("Unable to decode notification payload [%s] of observation [%s] ",
+            Hex.encodeHexString(payload), observation), e);
+      }
+      throw new InvalidResponseException(e,
+          "Unable to decode notification payload  of observation [%s] ",
+          observation);
     }
+  }
 }

@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -24,62 +24,72 @@ import org.eclipse.leshan.core.response.LwM2mResponse;
  *
  * Provides generic support for specifying the target client and the resource path.
  */
-public abstract class AbstractDownlinkRequest<T extends LwM2mResponse> implements DownlinkRequest<T> {
+public abstract class AbstractDownlinkRequest<T extends LwM2mResponse> implements
+    DownlinkRequest<T> {
 
-    private final LwM2mPath path;
+  private final LwM2mPath path;
 
-    protected AbstractDownlinkRequest(LwM2mPath path) {
-        if (path == null)
-            throw new InvalidRequestException("path is mandatory");
-
-        if (path.isRoot())
-            throw new InvalidRequestException("downlink request cannot target root path");
-
-        if (path.isResourceInstance())
-            throw new InvalidRequestException("downlink request cannot target resource instance path: %s ", path);
-
-        this.path = path;
+  protected AbstractDownlinkRequest(LwM2mPath path) {
+    if (path == null) {
+      throw new InvalidRequestException("path is mandatory");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LwM2mPath getPath() {
-        return this.path;
+    if (path.isRoot()) {
+      throw new InvalidRequestException("downlink request cannot target root path");
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        return result;
+    if (path.isResourceInstance()) {
+      throw new InvalidRequestException(
+          "downlink request cannot target resource instance path: %s ", path);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AbstractDownlinkRequest<?> other = (AbstractDownlinkRequest<?>) obj;
-        if (path == null) {
-            if (other.path != null)
-                return false;
-        } else if (!path.equals(other.path))
-            return false;
-        return true;
-    }
+    this.path = path;
+  }
 
-    protected static LwM2mPath newPath(String path) {
-        try {
-            return new LwM2mPath(path);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestException();
-        }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public LwM2mPath getPath() {
+    return this.path;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((path == null) ? 0 : path.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    AbstractDownlinkRequest<?> other = (AbstractDownlinkRequest<?>) obj;
+    if (path == null) {
+      if (other.path != null) {
+        return false;
+      }
+    } else if (!path.equals(other.path)) {
+      return false;
+    }
+    return true;
+  }
+
+  protected static LwM2mPath newPath(String path) {
+    try {
+      return new LwM2mPath(path);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidRequestException();
+    }
+  }
 
 }

@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -34,56 +34,57 @@ import org.slf4j.LoggerFactory;
 
 public class BootstrapResource extends CoapResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapResource.class);
-    private static final String QUERY_PARAM_ENDPOINT = "ep=";
+  private static final Logger LOG = LoggerFactory.getLogger(BootstrapResource.class);
+  private static final String QUERY_PARAM_ENDPOINT = "ep=";
 
-    private final BootstrapHandler bootstrapHandler;
+  private final BootstrapHandler bootstrapHandler;
 
-    public BootstrapResource(BootstrapHandler handler) {
-        super("bs");
-        bootstrapHandler = handler;
+  public BootstrapResource(BootstrapHandler handler) {
+    super("bs");
+    bootstrapHandler = handler;
+  }
+
+  @Override
+  public void handleRequest(Exchange exchange) {
+    try {
+      super.handleRequest(exchange);
+    } catch (Exception e) {
+      LOG.error("Exception while handling a request on the /bs resource", e);
+      exchange.sendResponse(new Response(ResponseCode.INTERNAL_SERVER_ERROR));
+    }
+  }
+
+  @Override
+  public void handlePOST(CoapExchange exchange) {
+    Request request = exchange.advanced().getRequest();
+    LOG.debug("POST received : {}", request);
+
+    // The LW M2M spec (section 8.2) mandates the usage of Confirmable
+    // messages
+    if (!Type.CON.equals(request.getType())) {
+      exchange.respond(ResponseCode.BAD_REQUEST);
+      return;
     }
 
-    @Override
-    public void handleRequest(Exchange exchange) {
-        try {
-            super.handleRequest(exchange);
-        } catch (Exception e) {
-            LOG.error("Exception while handling a request on the /bs resource", e);
-            exchange.sendResponse(new Response(ResponseCode.INTERNAL_SERVER_ERROR));
-        }
+    // which endpoint?
+    String endpoint = null;
+    for (String param : request.getOptions().getUriQuery()) {
+      if (param.startsWith(QUERY_PARAM_ENDPOINT)) {
+        endpoint = param.substring(QUERY_PARAM_ENDPOINT.length());
+        break;
+      }
     }
 
-    @Override
-    public void handlePOST(CoapExchange exchange) {
-        Request request = exchange.advanced().getRequest();
-        LOG.debug("POST received : {}", request);
+    // Extract client identity
+    Identity clientIdentity = EndpointContextUtil.extractIdentity(request.getSourceContext());
 
-        // The LW M2M spec (section 8.2) mandates the usage of Confirmable
-        // messages
-        if (!Type.CON.equals(request.getType())) {
-            exchange.respond(ResponseCode.BAD_REQUEST);
-            return;
-        }
-
-        // which endpoint?
-        String endpoint = null;
-        for (String param : request.getOptions().getUriQuery()) {
-            if (param.startsWith(QUERY_PARAM_ENDPOINT)) {
-                endpoint = param.substring(QUERY_PARAM_ENDPOINT.length());
-                break;
-            }
-        }
-
-        // Extract client identity
-        Identity clientIdentity = EndpointContextUtil.extractIdentity(request.getSourceContext());
-
-        // handle bootstrap request
-        BootstrapResponse response = bootstrapHandler.bootstrap(clientIdentity, new BootstrapRequest(endpoint));
-        if (response.isSuccess()) {
-            exchange.respond(toCoapResponseCode(response.getCode()));
-        } else {
-            exchange.respond(toCoapResponseCode(response.getCode()), response.getErrorMessage());
-        }
+    // handle bootstrap request
+    BootstrapResponse response = bootstrapHandler
+        .bootstrap(clientIdentity, new BootstrapRequest(endpoint));
+    if (response.isSuccess()) {
+      exchange.respond(toCoapResponseCode(response.getCode()));
+    } else {
+      exchange.respond(toCoapResponseCode(response.getCode()), response.getErrorMessage());
     }
+  }
 }

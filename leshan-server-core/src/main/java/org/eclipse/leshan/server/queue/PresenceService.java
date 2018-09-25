@@ -20,32 +20,33 @@ import org.eclipse.leshan.server.registration.Registration;
 
 /**
  * Tracks the status of each LWM2M client registered with Queue mode binding. Also ensures that the
- * {@link PresenceListener} are notified on state changes only for those LWM2M clients registered using Queue mode
- * binding.
+ * {@link PresenceListener} are notified on state changes only for those LWM2M clients registered
+ * using Queue mode binding.
  *
  * @see Presence
  */
 public interface PresenceService {
 
-    /**
-     * Add the listener to get notified when the LWM2M client goes online or offline.
-     * 
-     * @param listener target to notify
-     */
-    void addListener(PresenceListener listener);
+  /**
+   * Add the listener to get notified when the LWM2M client goes online or offline.
+   *
+   * @param listener target to notify
+   */
+  void addListener(PresenceListener listener);
 
-    /**
-     * Remove the listener previously added. This method has no effect if the given listener is not previously added.
-     * 
-     * @param listener target to be removed.
-     */
-    void removeListener(PresenceListener listener);
+  /**
+   * Remove the listener previously added. This method has no effect if the given listener is not
+   * previously added.
+   *
+   * @param listener target to be removed.
+   */
+  void removeListener(PresenceListener listener);
 
-    /**
-     * Returns the current state of a given LWM2M client registration.
-     * 
-     * @param registration the client's registration object.
-     * @return true if the status is {@link Presence#Awake}
-     */
-    boolean isClientAwake(Registration registration);
+  /**
+   * Returns the current state of a given LWM2M client registration.
+   *
+   * @param registration the client's registration object.
+   * @return true if the status is {@link Presence#Awake}
+   */
+  boolean isClientAwake(Registration registration);
 }

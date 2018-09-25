@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
@@ -41,31 +41,31 @@ import org.eclipse.leshan.core.response.WriteResponse;
 
 public interface LwM2mObjectEnabler {
 
-    int getId();
+  int getId();
 
-    ObjectModel getObjectModel();
+  ObjectModel getObjectModel();
 
-    List<Integer> getAvailableInstanceIds();
+  List<Integer> getAvailableInstanceIds();
 
-    List<Integer> getAvailableResourceIds(int instanceId);
+  List<Integer> getAvailableResourceIds(int instanceId);
 
-    CreateResponse create(ServerIdentity identity, CreateRequest request);
+  CreateResponse create(ServerIdentity identity, CreateRequest request);
 
-    ReadResponse read(ServerIdentity identity, ReadRequest request);
+  ReadResponse read(ServerIdentity identity, ReadRequest request);
 
-    WriteResponse write(ServerIdentity identity, WriteRequest request);
+  WriteResponse write(ServerIdentity identity, WriteRequest request);
 
-    BootstrapWriteResponse write(ServerIdentity identity, BootstrapWriteRequest request);
+  BootstrapWriteResponse write(ServerIdentity identity, BootstrapWriteRequest request);
 
-    DeleteResponse delete(ServerIdentity identity, DeleteRequest request);
+  DeleteResponse delete(ServerIdentity identity, DeleteRequest request);
 
-    ExecuteResponse execute(ServerIdentity identity, ExecuteRequest request);
+  ExecuteResponse execute(ServerIdentity identity, ExecuteRequest request);
 
-    WriteAttributesResponse writeAttributes(ServerIdentity identity, WriteAttributesRequest request);
+  WriteAttributesResponse writeAttributes(ServerIdentity identity, WriteAttributesRequest request);
 
-    DiscoverResponse discover(ServerIdentity identity, DiscoverRequest request);
+  DiscoverResponse discover(ServerIdentity identity, DiscoverRequest request);
 
-    ObserveResponse observe(ServerIdentity identity, ObserveRequest request);
+  ObserveResponse observe(ServerIdentity identity, ObserveRequest request);
 
-    void setNotifySender(NotifySender sender);
+  void setNotifySender(NotifySender sender);
 }

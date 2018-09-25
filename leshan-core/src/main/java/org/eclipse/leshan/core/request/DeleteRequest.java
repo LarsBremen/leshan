@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -24,39 +24,41 @@ import org.eclipse.leshan.core.response.DeleteResponse;
  */
 public class DeleteRequest extends AbstractDownlinkRequest<DeleteResponse> {
 
-    /**
-     * Creates a request for deleting a particular object instance implemented by a client.
-     *
-     * @param objectId the object type
-     * @param objectInstanceId the object instance
-     */
-    public DeleteRequest(int objectId, int objectInstanceId) {
-        this(new LwM2mPath(objectId, objectInstanceId));
-    }
+  /**
+   * Creates a request for deleting a particular object instance implemented by a client.
+   *
+   * @param objectId the object type
+   * @param objectInstanceId the object instance
+   */
+  public DeleteRequest(int objectId, int objectInstanceId) {
+    this(new LwM2mPath(objectId, objectInstanceId));
+  }
 
-    /**
-     * Creates a request for deleting a particular object instance implemented by a client.
-     *
-     * @param path the path of the instance to delete
-     * @exception InvalidRequestException if the path is not valid.
-     */
-    public DeleteRequest(String path) throws InvalidRequestException {
-        this(newPath(path));
-    }
+  /**
+   * Creates a request for deleting a particular object instance implemented by a client.
+   *
+   * @param path the path of the instance to delete
+   * @throws InvalidRequestException if the path is not valid.
+   */
+  public DeleteRequest(String path) throws InvalidRequestException {
+    this(newPath(path));
+  }
 
-    private DeleteRequest(LwM2mPath target) {
-        super(target);
-        if (!target.isObjectInstance())
-            throw new InvalidRequestException("Invalid path %s : Only object instances can be delete", target);
+  private DeleteRequest(LwM2mPath target) {
+    super(target);
+    if (!target.isObjectInstance()) {
+      throw new InvalidRequestException("Invalid path %s : Only object instances can be delete",
+          target);
     }
+  }
 
-    @Override
-    public void accept(DownlinkRequestVisitor visitor) {
-        visitor.visit(this);
-    }
+  @Override
+  public void accept(DownlinkRequestVisitor visitor) {
+    visitor.visit(this);
+  }
 
-    @Override
-    public final String toString() {
-        return String.format("DeleteRequest [%s]", getPath());
-    }
+  @Override
+  public final String toString() {
+    return String.format("DeleteRequest [%s]", getPath());
+  }
 }

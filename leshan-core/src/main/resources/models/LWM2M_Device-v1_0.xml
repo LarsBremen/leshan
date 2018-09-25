@@ -60,85 +60,89 @@ LEGAL DISCLAIMER
   http://www.openmobilealliance.org/ipr.html
 -->
 
-<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
-	<Object ObjectType="MODefinition">
-		<Name>Device</Name>
-		<Description1><![CDATA[This LwM2M Object provides a range of device related information which can be queried by the LwM2M Server, and a device reboot and factory reset function.]]></Description1>
-		<ObjectID>3</ObjectID>
-		<ObjectURN>urn:oma:lwm2m:oma:3</ObjectURN>
-		<MultipleInstances>Single</MultipleInstances>
-		<Mandatory>Mandatory</Mandatory>
-		<Resources>
-			<Item ID="0">
-				<Name>Manufacturer</Name>
+<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
+  <Object ObjectType="MODefinition">
+    <Name>Device</Name>
+    <Description1>
+      <![CDATA[This LwM2M Object provides a range of device related information which can be queried by the LwM2M Server, and a device reboot and factory reset function.]]></Description1>
+    <ObjectID>3</ObjectID>
+    <ObjectURN>urn:oma:lwm2m:oma:3</ObjectURN>
+    <MultipleInstances>Single</MultipleInstances>
+    <Mandatory>Mandatory</Mandatory>
+    <Resources>
+      <Item ID="0">
+        <Name>Manufacturer</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Human readable manufacturer name]]></Description>
-			</Item>
-			<Item ID="1">
-				<Name>Model Number</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[Human readable manufacturer name]]></Description>
+      </Item>
+      <Item ID="1">
+        <Name>Model Number</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[A model identifier (manufacturer specified string)]]></Description>
-			</Item>
-			<Item ID="2">
-				<Name>Serial Number</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[A model identifier (manufacturer specified string)]]></Description>
+      </Item>
+      <Item ID="2">
+        <Name>Serial Number</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Serial Number]]></Description>
-			</Item>
-			<Item ID="3">
-				<Name>Firmware Version</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[Serial Number]]></Description>
+      </Item>
+      <Item ID="3">
+        <Name>Firmware Version</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Current firmware version of the Device.The Firmware Management function could rely on this resource.]]></Description>
-			</Item>
-			<Item ID="4">
-				<Name>Reboot</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Current firmware version of the Device.The Firmware Management function could rely on this resource.]]></Description>
+      </Item>
+      <Item ID="4">
+        <Name>Reboot</Name>
         <Operations>E</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Mandatory</Mandatory>
-				<Type></Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Reboot the LwM2M Device to restore the Device from unexpected firmware failure.]]></Description>
-			</Item>
-			<Item ID="5">
-				<Name>Factory Reset</Name>
+        <Mandatory>Mandatory</Mandatory>
+        <Type></Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Reboot the LwM2M Device to restore the Device from unexpected firmware failure.]]></Description>
+      </Item>
+      <Item ID="5">
+        <Name>Factory Reset</Name>
         <Operations>E</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type></Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Perform factory reset of the LwM2M Device to make the LwM2M Device to go through initial deployment sequence where provisioning and bootstrap sequence is performed. This requires client ensuring post factory reset to have minimal information to allow it to carry out one of the bootstrap methods specified in section 5.2.3. 
+        <Mandatory>Optional</Mandatory>
+        <Type></Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[Perform factory reset of the LwM2M Device to make the LwM2M Device to go through initial deployment sequence where provisioning and bootstrap sequence is performed. This requires client ensuring post factory reset to have minimal information to allow it to carry out one of the bootstrap methods specified in section 5.2.3.
 When this Resource is executed, “De-register” operation MAY be sent to the LwM2M Server(s) before factory reset of the LwM2M Device.]]></Description>
-			</Item>
-			<Item ID="6">
-				<Name>Available Power Sources</Name>
+      </Item>
+      <Item ID="6">
+        <Name>Available Power Sources</Name>
         <Operations>R</Operations>
         <MultipleInstances>Multiple</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Integer</Type>
-				<RangeEnumeration>0-7</RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[0 – DC power
+        <Mandatory>Optional</Mandatory>
+        <Type>Integer</Type>
+        <RangeEnumeration>0-7</RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[0 – DC power
 1 – Internal Battery
 2 – External Battery
 4 – Power over Ethernet
@@ -146,17 +150,18 @@ When this Resource is executed, “De-register” operation MAY be sent to the L
 6 – AC (Mains) power
 7 – Solar
 The same Resource Instance ID MUST be used to associate a given Power Source (Resource ID:6) with its Present Voltage (Resource ID:7) and its Present Current (Resource ID:8)]]></Description>
-			</Item>
-			<Item ID="7">
-				<Name>Power Source Voltage</Name>
+      </Item>
+      <Item ID="7">
+        <Name>Power Source Voltage</Name>
         <Operations>R</Operations>
         <MultipleInstances>Multiple</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Integer</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>mV</Units>
-				<Description><![CDATA[Present voltage for each Available Power Sources Resource Instance.]]></Description>
-			</Item>
+        <Mandatory>Optional</Mandatory>
+        <Type>Integer</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>mV</Units>
+        <Description>
+          <![CDATA[Present voltage for each Available Power Sources Resource Instance.]]></Description>
+      </Item>
       <Item ID="8">
         <Name>Power Source Current</Name>
         <Operations>R</Operations>
@@ -175,7 +180,8 @@ The same Resource Instance ID MUST be used to associate a given Power Source (Re
         <Type>Integer</Type>
         <RangeEnumeration>0-100</RangeEnumeration>
         <Units>%</Units>
-        <Description><![CDATA[Contains the current battery level as a percentage (with a range from 0 to 100). This value is only valid for the Device internal Battery if present (one Available Power Sources Resource Instance is 1).]]></Description>
+        <Description>
+          <![CDATA[Contains the current battery level as a percentage (with a range from 0 to 100). This value is only valid for the Device internal Battery if present (one Available Power Sources Resource Instance is 1).]]></Description>
       </Item>
       <Item ID="10">
         <Name>Memory Free</Name>
@@ -185,8 +191,9 @@ The same Resource Instance ID MUST be used to associate a given Power Source (Re
         <Type>Integer</Type>
         <RangeEnumeration></RangeEnumeration>
         <Units>KB</Units>
-        <Description><![CDATA[Estimated current available amount of storage space which can store data and software in the LwM2M Device (expressed in kilobytes).]]></Description>
-	  </Item>
+        <Description>
+          <![CDATA[Estimated current available amount of storage space which can store data and software in the LwM2M Device (expressed in kilobytes).]]></Description>
+      </Item>
       <Item ID="11">
         <Name>Error Code</Name>
         <Operations>R</Operations>
@@ -216,7 +223,8 @@ This error code Resource MAY be observed by the LwM2M Server. How to deal with L
         <Type></Type>
         <RangeEnumeration></RangeEnumeration>
         <Units></Units>
-        <Description><![CDATA[Delete all error code Resource Instances and create only one zero-value error code that implies no error.]]></Description>
+        <Description>
+          <![CDATA[Delete all error code Resource Instances and create only one zero-value error code that implies no error.]]></Description>
       </Item>
       <Item ID="13">
         <Name>Current Time</Name>
@@ -238,7 +246,8 @@ The LwM2M Server is able to write this Resource to make the LwM2M Client synchro
         <Type>String</Type>
         <RangeEnumeration></RangeEnumeration>
         <Units></Units>
-        <Description><![CDATA[Indicates the UTC offset currently in effect for this LwM2M Device. UTC+X [ISO 8601].]]></Description>
+        <Description>
+          <![CDATA[Indicates the UTC offset currently in effect for this LwM2M Device. UTC+X [ISO 8601].]]></Description>
       </Item>
       <Item ID="15">
         <Name>Timezone</Name>
@@ -248,7 +257,8 @@ The LwM2M Server is able to write this Resource to make the LwM2M Client synchro
         <Type>String</Type>
         <RangeEnumeration></RangeEnumeration>
         <Units></Units>
-        <Description><![CDATA[Indicates in which time zone the LwM2M Device is located, in IANA Timezone (TZ) database format.]]></Description>
+        <Description>
+          <![CDATA[Indicates in which time zone the LwM2M Device is located, in IANA Timezone (TZ) database format.]]></Description>
       </Item>
       <Item ID="16">
         <Name>Supported Binding and Modes</Name>
@@ -258,44 +268,50 @@ The LwM2M Server is able to write this Resource to make the LwM2M Client synchro
         <Type>String</Type>
         <RangeEnumeration></RangeEnumeration>
         <Units></Units>
-        <Description><![CDATA[Indicates which bindings and modes are supported in the LwM2M Client. The possible values of Resource are combination of "U" or "UQ" and "S" or "SQ".]]></Description>
-     </Item>    
-			<Item ID="17"><Name>Device Type</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Type of the device (manufacturer specified string: e.g., smart meters / dev Class…)]]></Description>
-			</Item>
-			<Item ID="18"><Name>Hardware Version</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Current hardware version of the device]]></Description>
-			</Item>
-			<Item ID="19"><Name>Software Version</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>String</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Current software version of the device (manufacturer specified string). On elaborated LwM2M device, SW could be split in 2 parts: a firmware one and a higher level software on top.
+        <Description>
+          <![CDATA[Indicates which bindings and modes are supported in the LwM2M Client. The possible values of Resource are combination of "U" or "UQ" and "S" or "SQ".]]></Description>
+      </Item>
+      <Item ID="17">
+        <Name>Device Type</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Type of the device (manufacturer specified string: e.g., smart meters / dev Class…)]]></Description>
+      </Item>
+      <Item ID="18">
+        <Name>Hardware Version</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[Current hardware version of the device]]></Description>
+      </Item>
+      <Item ID="19">
+        <Name>Software Version</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[Current software version of the device (manufacturer specified string). On elaborated LwM2M device, SW could be split in 2 parts: a firmware one and a higher level software on top.
 Both pieces of Software are together managed by LwM2M Firmware Update Object (Object ID 5)]]></Description>
-			</Item>
-			<Item ID="20"><Name>Battery Status</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Integer</Type>
-				<RangeEnumeration>0-6</RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[This value is only valid for the Device Internal Battery if present (one Available Power Sources Resource Instance value is 1).
+      </Item>
+      <Item ID="20">
+        <Name>Battery Status</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>Integer</Type>
+        <RangeEnumeration>0-6</RangeEnumeration>
+        <Units></Units>
+        <Description><![CDATA[This value is only valid for the Device Internal Battery if present (one Available Power Sources Resource Instance value is 1).
 Battery
 Status	Meaning	Description
 0	Normal	The battery is operating normally and not on power.
@@ -305,25 +321,52 @@ Status	Meaning	Description
 4	Low Battery	The battery is low on charge.
 5	Not Installed	The battery is not installed.
 6	Unknown	The battery information is not available.]]></Description>
-			</Item>
-			<Item ID="21"><Name>Memory Total</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Integer</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Total amount of storage space which can store data and software in the LwM2M Device (expressed in kilobytes).]]></Description>
-			</Item>
-			<Item ID="22"><Name>ExtDevInfo</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Multiple</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Objlnk</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[Reference to external “Device” object instance containing information. For example, such an external device can be a Host Device, which is a device into which the Device containing the LwM2M client is embedded. This Resource may be used to retrieve information about the Host Device.]]></Description>
-			</Item></Resources>
-			<Description2></Description2>
-	</Object>
+      </Item>
+      <Item ID="21">
+        <Name>Memory Total</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>Integer</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Total amount of storage space which can store data and software in the LwM2M Device (expressed in kilobytes).]]></Description>
+      </Item>
+      <Item ID="22">
+        <Name>TestString</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>String</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Reference to external “Device” object instance containing information. For example, such an external device can be a Host Device, which is a device into which the Device containing the LwM2M client is embedded. This Resource may be used to retrieve information about the Host Device.]]></Description>
+      </Item>
+      <Item ID="23">
+        <Name>TestOpaque</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>Objlnk</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Reference to external “Device” object instance containing information. For example, such an external device can be a Host Device, which is a device into which the Device containing the LwM2M client is embedded. This Resource may be used to retrieve information about the Host Device.]]></Description>
+      </Item>
+      <Item ID="24">
+        <Name>ExtDevInfo</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Multiple</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>Objlnk</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[Reference to external “Device” object instance containing information. For example, such an external device can be a Host Device, which is a device into which the Device containing the LwM2M client is embedded. This Resource may be used to retrieve information about the Host Device.]]></Description>
+      </Item>
+    </Resources>
+    <Description2></Description2>
+  </Object>
 </LWM2M>

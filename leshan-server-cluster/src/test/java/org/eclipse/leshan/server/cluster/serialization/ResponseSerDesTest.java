@@ -29,19 +29,19 @@ import com.eclipsesource.json.JsonObject;
 
 public class ResponseSerDesTest {
 
-    @Test
-    public void ser_and_des_discover_response() throws Exception {
-        Link[] objs = new Link[2];
-        Map<String, Object> att = new HashMap<>();
-        att.put("ts", 12);
-        att.put("rt", "test");
-        objs[0] = new Link("/0/1024/2", att);
-        objs[1] = new Link("/0/2");
+  @Test
+  public void ser_and_des_discover_response() throws Exception {
+    Link[] objs = new Link[2];
+    Map<String, Object> att = new HashMap<>();
+    att.put("ts", 12);
+    att.put("rt", "test");
+    objs[0] = new Link("/0/1024/2", att);
+    objs[1] = new Link("/0/2");
 
-        DiscoverResponse dr = DiscoverResponse.success(objs);
-        JsonObject obj = ResponseSerDes.jSerialize(dr);
-        LwM2mResponse dr2 = ResponseSerDes.deserialize(obj);
+    DiscoverResponse dr = DiscoverResponse.success(objs);
+    JsonObject obj = ResponseSerDes.jSerialize(dr);
+    LwM2mResponse dr2 = ResponseSerDes.deserialize(obj);
 
-        assertEquals(dr.toString(), dr2.toString());
-    }
+    assertEquals(dr.toString(), dr2.toString());
+  }
 }

@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
+<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
   <Object ObjectType="MODefinition">
     <Name>App Data Container</Name>
-    <Description1><![CDATA[This LWM2M Object is used for reporting application data of a device.]]></Description1>
+    <Description1>
+      <![CDATA[This LWM2M Object is used for reporting application data of a device.]]></Description1>
     <ObjectID>10250</ObjectID>
     <ObjectURN>urn:oma:lwm2m:x:10250</ObjectURN>
     <LWM2MVersion>1.0</LWM2MVersion>
@@ -20,7 +22,8 @@
         </RangeEnumeration>
         <Units>
         </Units>
-        <Description><![CDATA[Uplink application data, e.g. gas meter reporting data.]]></Description>
+        <Description>
+          <![CDATA[Uplink application data, e.g. gas meter reporting data.]]></Description>
       </Item>
       <Item ID="1">
         <Name>DL data</Name>
@@ -32,9 +35,10 @@
         </RangeEnumeration>
         <Units>
         </Units>
-        <Description><![CDATA[Downlink application data, e.g. application response message of uplink data.]]></Description>
+        <Description>
+          <![CDATA[Downlink application data, e.g. application response message of uplink data.]]></Description>
       </Item>
     </Resources>
-    <Description2 />
+    <Description2/>
   </Object>
 </LWM2M>

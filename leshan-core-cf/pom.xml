@@ -15,54 +15,57 @@ Contributors:
     Sierra Wireless - initial API and implementation
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.eclipse.leshan</groupId>
-        <artifactId>leshan</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>leshan-core-cf</artifactId>
-    <packaging>bundle</packaging>
-    <name>leshan - core californium</name>
-    <description>Shared classes between server and client which depends on CoAP Californium</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.leshan</groupId>
+    <artifactId>leshan</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>leshan-core-cf</artifactId>
+  <packaging>bundle</packaging>
+  <name>leshan - core californium</name>
+  <description>Shared classes between server and client which depends on CoAP Californium
+  </description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.leshan</groupId>
-            <artifactId>leshan-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>californium-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>scandium</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.leshan</groupId>
+      <artifactId>leshan-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.californium</groupId>
+      <artifactId>californium-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.californium</groupId>
+      <artifactId>scandium</artifactId>
+    </dependency>
 
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <_exportcontents>*</_exportcontents>
-                        <Import-Package>*</Import-Package>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <_exportcontents>*</_exportcontents>
+            <Import-Package>*</Import-Package>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

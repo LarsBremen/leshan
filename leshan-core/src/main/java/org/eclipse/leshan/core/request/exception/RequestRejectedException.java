@@ -21,9 +21,9 @@ package org.eclipse.leshan.core.request.exception;
  */
 public class RequestRejectedException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public RequestRejectedException(String message, Object... args) {
-        super(String.format(message, args));
-    }
+  public RequestRejectedException(String message, Object... args) {
+    super(String.format(message, args));
+  }
 }

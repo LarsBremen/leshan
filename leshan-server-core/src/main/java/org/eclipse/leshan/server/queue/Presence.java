@@ -19,8 +19,12 @@ package org.eclipse.leshan.server.queue;
  * Possible states of a LWM2M client registered with Queue mode binding.
  */
 public enum Presence {
-    /** LWM2M Client is reachable and messages can be sent **/
-    AWAKE,
-    /** LWM2M Client is not reachable and no messages can be sent **/
-    SLEEPING
+  /**
+   * LWM2M Client is reachable and messages can be sent
+   **/
+  AWAKE,
+  /**
+   * LWM2M Client is not reachable and no messages can be sent
+   **/
+  SLEEPING
 }

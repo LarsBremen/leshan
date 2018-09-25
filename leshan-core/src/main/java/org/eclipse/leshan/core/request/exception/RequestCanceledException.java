@@ -17,13 +17,14 @@
 package org.eclipse.leshan.core.request.exception;
 
 /**
- * Exception indicating that the message was cancelled on the CoAP layer and any retries will be stopped.
+ * Exception indicating that the message was cancelled on the CoAP layer and any retries will be
+ * stopped.
  */
 public class RequestCanceledException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public RequestCanceledException(String message, Object... args) {
-        super(String.format(message, args));
-    }
+  public RequestCanceledException(String message, Object... args) {
+    super(String.format(message, args));
+  }
 }

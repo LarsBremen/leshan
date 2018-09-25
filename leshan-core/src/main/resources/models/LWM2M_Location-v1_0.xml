@@ -60,84 +60,95 @@ LEGAL DISCLAIMER
   http://www.openmobilealliance.org/ipr.html
 -->
 
-<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
+<LWM2M xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://openmobilealliance.org/tech/profiles/LWM2M.xsd">
   <Object ObjectType="MODefinition">
-		<Name>Location</Name>
-		<Description1><![CDATA[This LwM2M Objects provide a range of device related information which can be queried by the LwM2M Server, and a device reboot and factory reset function.]]></Description1>
-		<ObjectID>6</ObjectID>
-		<ObjectURN>urn:oma:lwm2m:oma:6</ObjectURN>
-		<MultipleInstances>Single</MultipleInstances>
-		<Mandatory>Optional</Mandatory>
-		<Resources>
-			<Item ID="0">
-				<Name>Latitude</Name>
+    <Name>Location</Name>
+    <Description1>
+      <![CDATA[This LwM2M Objects provide a range of device related information which can be queried by the LwM2M Server, and a device reboot and factory reset function.]]></Description1>
+    <ObjectID>6</ObjectID>
+    <ObjectURN>urn:oma:lwm2m:oma:6</ObjectURN>
+    <MultipleInstances>Single</MultipleInstances>
+    <Mandatory>Optional</Mandatory>
+    <Resources>
+      <Item ID="0">
+        <Name>Latitude</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Mandatory</Mandatory>
-				<Type>Float</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>Deg</Units>
-				<Description><![CDATA[The decimal notation of latitude, e.g., -43.5723 [World Geodetic System 1984].]]></Description>
-			</Item>
-			<Item ID="1">
-				<Name>Longitude</Name>
+        <Mandatory>Mandatory</Mandatory>
+        <Type>Float</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>Deg</Units>
+        <Description>
+          <![CDATA[The decimal notation of latitude, e.g., -43.5723 [World Geodetic System 1984].]]></Description>
+      </Item>
+      <Item ID="1">
+        <Name>Longitude</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Mandatory</Mandatory>
-				<Type>Float</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>Deg</Units>
-				<Description><![CDATA[The decimal notation of longitude, e.g., 153.21760 [World Geodetic System 1984].]]></Description>
-			</Item>
-			<Item ID="2">
-				<Name>Altitude</Name>
+        <Mandatory>Mandatory</Mandatory>
+        <Type>Float</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>Deg</Units>
+        <Description>
+          <![CDATA[The decimal notation of longitude, e.g., 153.21760 [World Geodetic System 1984].]]></Description>
+      </Item>
+      <Item ID="2">
+        <Name>Altitude</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Float</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>m</Units>
-				<Description><![CDATA[The decimal notation of altitude in meters above sea level.]]></Description>
-			</Item>
-			<Item ID="3">
-				<Name>Radius</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>Float</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>m</Units>
+        <Description>
+          <![CDATA[The decimal notation of altitude in meters above sea level.]]></Description>
+      </Item>
+      <Item ID="3">
+        <Name>Radius</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Float</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>m</Units>
-				<Description><![CDATA[The value in the Radius Resource indicates the size in meters of a circular area around a point of geometry.]]></Description>
-			</Item>
-			<Item ID="4">
-				<Name>Velocity</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>Float</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>m</Units>
+        <Description>
+          <![CDATA[The value in the Radius Resource indicates the size in meters of a circular area around a point of geometry.]]></Description>
+      </Item>
+      <Item ID="4">
+        <Name>Velocity</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Opaque</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[The velocity in the LwM2M Client is defined in [3GPP-TS_23.032].]]></Description>
-			</Item>
-			<Item ID="5">
-				<Name>Timestamp</Name>
+        <Mandatory>Optional</Mandatory>
+        <Type>Opaque</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[The velocity in the LwM2M Client is defined in [3GPP-TS_23.032].]]></Description>
+      </Item>
+      <Item ID="5">
+        <Name>Timestamp</Name>
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Mandatory</Mandatory>
-				<Type>Time</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units></Units>
-				<Description><![CDATA[The timestamp of when the location measurement was performed.]]></Description>
-			</Item>
-			<Item ID="6"><Name>Speed</Name>
-				<Operations>R</Operations>
-				<MultipleInstances>Single</MultipleInstances>
-				<Mandatory>Optional</Mandatory>
-				<Type>Float</Type>
-				<RangeEnumeration></RangeEnumeration>
-				<Units>Meters per second</Units>
-				<Description><![CDATA[Speed is the time rate of change in position of a LwM2M Client without regard for direction: the scalar component of velocity.]]></Description>
-			</Item></Resources>
-		<Description2></Description2>
-	</Object>
+        <Mandatory>Mandatory</Mandatory>
+        <Type>Time</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units></Units>
+        <Description>
+          <![CDATA[The timestamp of when the location measurement was performed.]]></Description>
+      </Item>
+      <Item ID="6">
+        <Name>Speed</Name>
+        <Operations>R</Operations>
+        <MultipleInstances>Single</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Type>Float</Type>
+        <RangeEnumeration></RangeEnumeration>
+        <Units>Meters per second</Units>
+        <Description>
+          <![CDATA[Speed is the time rate of change in position of a LwM2M Client without regard for direction: the scalar component of velocity.]]></Description>
+      </Item>
+    </Resources>
+    <Description2></Description2>
+  </Object>
 </LWM2M>

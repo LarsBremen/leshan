@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2017 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *******************************************************************************/
@@ -30,85 +30,85 @@ import org.junit.Test;
 
 public class LeshanBootstrapServerBuilderTest {
 
-    private LeshanBootstrapServerBuilder builder;
-    private LeshanBootstrapServer server;
+  private LeshanBootstrapServerBuilder builder;
+  private LeshanBootstrapServer server;
 
-    @Before
-    public void start() {
-        builder = new LeshanBootstrapServerBuilder();
-        builder.setConfigStore(new BootstrapStore() {
-            @Override
-            public BootstrapConfig getBootstrap(String endpoint, Identity deviceIdentity) {
-                return null;
-            }
-        });
-    }
+  @Before
+  public void start() {
+    builder = new LeshanBootstrapServerBuilder();
+    builder.setConfigStore(new BootstrapStore() {
+      @Override
+      public BootstrapConfig getBootstrap(String endpoint, Identity deviceIdentity) {
+        return null;
+      }
+    });
+  }
 
-    @Test
-    public void create_server_minimal_parameters() {
-        server = builder.build();
+  @Test
+  public void create_server_minimal_parameters() {
+    server = builder.build();
 
-        assertNull(server.getSecuredAddress());
-        assertNotNull(server.getUnsecuredAddress());
-    }
+    assertNull(server.getSecuredAddress());
+    assertNotNull(server.getUnsecuredAddress());
+  }
 
-    @Test
-    public void create_server_with_securityStore() {
-        builder.setSecurityStore(new BootstrapSecurityStore() {
-            @Override
-            public SecurityInfo getByIdentity(String pskIdentity) {
-                return null;
-            }
+  @Test
+  public void create_server_with_securityStore() {
+    builder.setSecurityStore(new BootstrapSecurityStore() {
+      @Override
+      public SecurityInfo getByIdentity(String pskIdentity) {
+        return null;
+      }
 
-            @Override
-            public List<SecurityInfo> getAllByEndpoint(String endpoint) {
-                return null;
-            }
-        });
-        server = builder.build();
+      @Override
+      public List<SecurityInfo> getAllByEndpoint(String endpoint) {
+        return null;
+      }
+    });
+    server = builder.build();
 
-        assertNotNull(server.getSecuredAddress());
-        assertNotNull(server.getUnsecuredAddress());
-        assertNotNull(server.getBootstrapSecurityStore());
-    }
+    assertNotNull(server.getSecuredAddress());
+    assertNotNull(server.getUnsecuredAddress());
+    assertNotNull(server.getBootstrapSecurityStore());
+  }
 
-    @Test
-    public void create_server_with_securityStore_and_disable_secured_endpoint() {
-        builder.setSecurityStore(new BootstrapSecurityStore() {
-            @Override
-            public SecurityInfo getByIdentity(String pskIdentity) {
-                return null;
-            }
+  @Test
+  public void create_server_with_securityStore_and_disable_secured_endpoint() {
+    builder.setSecurityStore(new BootstrapSecurityStore() {
+      @Override
+      public SecurityInfo getByIdentity(String pskIdentity) {
+        return null;
+      }
 
-            @Override
-            public List<SecurityInfo> getAllByEndpoint(String endpoint) {
-                return null;
-            }
-        });
-        builder.disableSecuredEndpoint();
-        server = builder.build();
+      @Override
+      public List<SecurityInfo> getAllByEndpoint(String endpoint) {
+        return null;
+      }
+    });
+    builder.disableSecuredEndpoint();
+    server = builder.build();
 
-        assertNull(server.getSecuredAddress());
-        assertNotNull(server.getUnsecuredAddress());
-    }
+    assertNull(server.getSecuredAddress());
+    assertNotNull(server.getUnsecuredAddress());
+  }
 
-    @Test
-    public void create_server_with_securityStore_and_disable_unsecured_endpoint() {
-        builder.setSecurityStore(new BootstrapSecurityStore() {
-            @Override
-            public SecurityInfo getByIdentity(String pskIdentity) {
-                return null;
-            }
+  @Test
+  public void create_server_with_securityStore_and_disable_unsecured_endpoint() {
+    builder.setSecurityStore(new BootstrapSecurityStore() {
+      @Override
+      public SecurityInfo getByIdentity(String pskIdentity) {
+        return null;
+      }
 
-            @Override
-            public List<SecurityInfo> getAllByEndpoint(String endpoint) {
-                return null;
-            }
-        });
-        builder.disableUnsecuredEndpoint();
-        server = builder.build();
+      @Override
+      public List<SecurityInfo> getAllByEndpoint(String endpoint) {
+        return null;
+      }
+    });
+    builder.disableUnsecuredEndpoint();
+    server = builder.build();
 
-        assertNotNull(server.getSecuredAddress());
-        assertNull(server.getUnsecuredAddress());
-    }
+    assertNotNull(server.getSecuredAddress());
+    assertNull(server.getUnsecuredAddress());
+  }
 }

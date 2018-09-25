@@ -20,9 +20,9 @@ import org.eclipse.leshan.util.RandomStringUtils;
 
 public class RandomStringRegistrationIdProvider implements RegistrationIdProvider {
 
-    @Override
-    public String getRegistrationId(RegisterRequest registerRequest) {
-        return RandomStringUtils.random(10, true, true);
-    }
+  @Override
+  public String getRegistrationId(RegisterRequest registerRequest) {
+    return RandomStringUtils.random(10, true, true);
+  }
 
 }
