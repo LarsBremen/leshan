@@ -34,6 +34,12 @@ public class LwM2mSingleResource implements LwM2mResource {
 
   private final Type type;
 
+  /**
+   * LwM2mSingleResource constructor.
+   * @param id int - the id for the resource.
+   * @param value Object - the value saved.
+   * @param type Type - type of the value.
+   */
   protected LwM2mSingleResource(int id, Object value, Type type) {
     Validate.notNull(value);
     this.id = id;
@@ -41,8 +47,15 @@ public class LwM2mSingleResource implements LwM2mResource {
     this.type = type;
   }
 
+  /**
+   * LwM2mSingleResource Factory
+   * @param id int - id for the resource.
+   * @param value Object - the value saved.
+   * @param type Type - type of the value.
+   * @return LwM2mSingleResource the object instance.
+   */
   public static LwM2mSingleResource newResource(int id, Object value, Type type) {
-    String doesNotMatchMessage = "Value does not match the given datatype";
+    String doesNotMatchMessage = "Value does not match the given data type";
     switch (type) {
       case INTEGER:
         if (!(value instanceof Long)) {
@@ -85,30 +98,65 @@ public class LwM2mSingleResource implements LwM2mResource {
     return new LwM2mSingleResource(id, value, type);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type String.
+   * @param id int - the id for the resource.
+   * @param value String - the value saved.
+   */
   public static LwM2mSingleResource newStringResource(int id, String value) {
     return new LwM2mSingleResource(id, value, Type.STRING);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type Integer.
+   * @param id int - the id for the resource.
+   * @param value long - the value saved.
+   */
   public static LwM2mSingleResource newIntegerResource(int id, long value) {
     return new LwM2mSingleResource(id, value, Type.INTEGER);
   }
 
-  public static LwM2mSingleResource newObjectLinkResource(int id, ObjectLink objlink) {
-    return new LwM2mSingleResource(id, objlink, Type.OBJLNK);
+  /**
+   * Creates a new LwM2mSingleResource with the value type ObjectLink.
+   * @param id int - the id for the resource.
+   * @param objLink ObjectLink - the value saved.
+   */
+  public static LwM2mSingleResource newObjectLinkResource(int id, ObjectLink objLink) {
+    return new LwM2mSingleResource(id, objLink, Type.OBJLNK);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type Boolean.
+   * @param id int - the id for the resource.
+   * @param value boolean - the value saved.
+   */
   public static LwM2mSingleResource newBooleanResource(int id, boolean value) {
     return new LwM2mSingleResource(id, value, Type.BOOLEAN);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type Float.
+   * @param id int - the id for the resource.
+   * @param value double - the value saved.
+   */
   public static LwM2mSingleResource newFloatResource(int id, double value) {
     return new LwM2mSingleResource(id, value, Type.FLOAT);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type Time.
+   * @param id int - the id for the resource.
+   * @param value Date - the value saved.
+   */
   public static LwM2mSingleResource newDateResource(int id, Date value) {
     return new LwM2mSingleResource(id, value, Type.TIME);
   }
 
+  /**
+   * Creates a new LwM2mSingleResource with the value type Opaque.
+   * @param id int - the id for the resource.
+   * @param value byte[] - the value saved.
+   */
   public static LwM2mSingleResource newBinaryResource(int id, byte[] value) {
     return new LwM2mSingleResource(id, value, Type.OPAQUE);
   }
@@ -202,20 +250,16 @@ public class LwM2mSingleResource implements LwM2mResource {
       return false;
     }
     if (value == null) {
-      if (other.value != null) {
-        return false;
-      }
+      return other.value == null;
     } else {
       // Custom equals to handle byte arrays
       return type == Type.OPAQUE ? Arrays.equals((byte[]) value, (byte[]) other.value) : value
           .equals(other.value);
     }
-    return true;
   }
 
   @Override
   public String toString() {
     return String.format("LwM2mSingleResource [id=%s, value=%s, type=%s]", id, value, type);
   }
-
 }
