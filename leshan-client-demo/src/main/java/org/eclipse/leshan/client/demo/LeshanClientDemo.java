@@ -1,20 +1,19 @@
-/*******************************************************************************
- * Copyright (c) 2013-2015 Sierra Wireless and others.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Eclipse Distribution License v1.0 which accompany this distribution.
- *
- * The Eclipse Public License is available at
- *    http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- *    http://www.eclipse.org/org/documents/edl-v10.html.
- *
- * Contributors:
- *     Zebra Technologies - initial API and implementation
- *     Sierra Wireless, - initial API and implementation
- *     Bosch Software Innovations GmbH, - initial API and implementation
- *******************************************************************************/
+// Copyright (c) 2013-2015 Sierra Wireless and others.
+//
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0
+// and Eclipse Distribution License v1.0 which accompany this distribution.
+//
+// The Eclipse Public License is available at
+//    http://www.eclipse.org/legal/epl-v10.html
+// and the Eclipse Distribution License is available at
+//    http://www.eclipse.org/org/documents/edl-v10.html.
+//
+// Contributors:
+//     Zebra Technologies - initial API and implementation
+//     Sierra Wireless, - initial API and implementation
+//     Bosch Software Innovations GmbH, - initial API and implementation
+
 
 package org.eclipse.leshan.client.demo;
 
@@ -56,72 +55,16 @@ public class LeshanClientDemo {
 
   private static final Logger LOG = LoggerFactory.getLogger(LeshanClientDemo.class);
 
-  private final static String[] modelPaths = new String[]{"3303.xml"};
+  private final static String[] modelPaths = new String[]{"3303.xml", "10266.xml"};
 
   private static final int OBJECT_ID_TEMPERATURE_SENSOR = 3303;
   private final static String DEFAULT_ENDPOINT = "LeshanClientDemo";
   private final static String USAGE = "java -jar leshan-client-demo.jar [OPTION]\n\n";
 
-  private static MyLocation locationInstance;
-
   public static void main(final String[] args) {
 
     // Define options for command line tools
-    Options options = new Options();
-
-    final StringBuilder PSKChapter = new StringBuilder();
-    PSKChapter.append("\n .");
-    PSKChapter.append("\n .");
-    PSKChapter
-        .append("\n ================================[ PSK ]=================================");
-    PSKChapter
-        .append("\n | By default Leshan demo use non secure connection.                    |");
-    PSKChapter
-        .append("\n | To use PSK, -i and -p options should be used together.               |");
-    PSKChapter
-        .append("\n ------------------------------------------------------------------------");
-
-    final StringBuilder RPKChapter = new StringBuilder();
-    RPKChapter.append("\n .");
-    RPKChapter.append("\n .");
-    RPKChapter
-        .append("\n ================================[ RPK ]=================================");
-    RPKChapter
-        .append("\n | By default Leshan demo use non secure connection.                    |");
-    RPKChapter
-        .append("\n | To use RPK, -cpubk -cpribk -spubk options should be used together.   |");
-    RPKChapter
-        .append("\n | To get helps about files format and how to generate it, see :        |");
-    RPKChapter
-        .append("\n | See https://github.com/eclipse/leshan/wiki/Credential-files-format   |");
-    RPKChapter
-        .append("\n ------------------------------------------------------------------------");
-
-    options.addOption("h", "help", false, "Display help information.");
-    options.addOption("n", true, String.format(
-        "Set the endpoint name of the Client.\nDefault: the local hostname or '%s' if any.",
-        DEFAULT_ENDPOINT));
-    options.addOption("b", false, "If present use bootstrap.");
-    options.addOption("lh", true,
-        "Set the local CoAP address of the Client.\n  Default: any local address.");
-    options.addOption("lp", true,
-        "Set the local CoAP port of the Client.\n  Default: A valid port value is between 0 and 65535.");
-    options.addOption("u", true,
-        String.format("Set the LWM2M or Bootstrap server URL.\nDefault: localhost:%d.",
-            LwM2m.DEFAULT_COAP_PORT));
-    options.addOption("pos", true,
-        "Set the initial location (latitude, longitude) of the device to be reported by the Location object.\n Format: lat_float:long_float");
-    options.addOption("sf", true,
-        "Scale factor to apply when shifting position.\n Default is 1.0." + PSKChapter);
-    options.addOption("i", true, "Set the LWM2M or Bootstrap server PSK identity in ascii.");
-    options.addOption("p", true,
-        "Set the LWM2M or Bootstrap server Pre-Shared-Key in hexa." + RPKChapter);
-    options.addOption("cpubk", true,
-        "The path to your client public key file.\n The public Key should be in SubjectPublicKeyInfo format (DER encoding).");
-    options.addOption("cprik", true,
-        "The path to your client private key file.\nThe private key should be in PKCS#8 format (DER encoding).");
-    options.addOption("spubk", true,
-        "The path to your server public key file.\n The public Key should be in SubjectPublicKeyInfo format (DER encoding).");
+    Options options = defineCommandLineOptions();
 
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(90);
@@ -129,6 +72,7 @@ public class LeshanClientDemo {
 
     // Parse arguments
     CommandLine cl;
+    //noinspection Duplicates
     try {
       cl = new DefaultParser().parse(options, args);
     } catch (ParseException e) {
@@ -137,72 +81,19 @@ public class LeshanClientDemo {
       return;
     }
 
-    // Print help
-    if (cl.hasOption("help")) {
-      formatter.printHelp(USAGE, options);
+    if (!commandLineCheck(cl, formatter, options)) {
       return;
-    }
-
-    // Abort if unexpected options
-    if (cl.getArgs().length > 0) {
-      System.err.println("Unexpected option or arguments : " + cl.getArgList());
-      formatter.printHelp(USAGE, options);
-      return;
-    }
-
-    // Abort if PSK config is not complete
-    if ((cl.hasOption("i") && !cl.hasOption("p")) || !cl.hasOption("i") && cl.hasOption("p")) {
-      System.err
-          .println(
-              "You should precise identity (-i) and Pre-Shared-Key (-p) if you want to connect in PSK");
-      formatter.printHelp(USAGE, options);
-      return;
-    }
-
-    // Abort if all RPK config is not complete
-    if (cl.hasOption("cpubk") || cl.hasOption("cprik") || cl.hasOption("spubk")) {
-      if (!cl.hasOption("cpubk") || !cl.hasOption("cprik") || !cl.hasOption("spubk")) {
-        System.err.println("cpubk, cprik and spubk should be used together to connect using RPK");
-        formatter.printHelp(USAGE, options);
-        return;
-      }
     }
 
     // Get endpoint name
-    String endpoint;
-    if (cl.hasOption("n")) {
-      endpoint = cl.getOptionValue("n");
-    } else {
-      try {
-        endpoint = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException e) {
-        endpoint = DEFAULT_ENDPOINT;
-      }
-    }
+    String endpoint = getEndpointName(cl);
 
     // Get server URI
-    String serverURI;
-    if (cl.hasOption("u")) {
-      if (cl.hasOption("i") || cl.hasOption("cpubk")) {
-        serverURI = "coaps://" + cl.getOptionValue("u");
-      } else {
-        serverURI = "coap://" + cl.getOptionValue("u");
-      }
-    } else {
-      if (cl.hasOption("i") || cl.hasOption("cpubk")) {
-        serverURI = "coaps://localhost:" + LwM2m.DEFAULT_COAP_SECURE_PORT;
-      } else {
-        serverURI = "coap://localhost:" + LwM2m.DEFAULT_COAP_PORT;
-      }
-    }
+    String serverURI = getServerUrl(cl);
 
     // get PSK info
-    byte[] pskIdentity = null;
-    byte[] pskKey = null;
-    if (cl.hasOption("i")) {
-      pskIdentity = cl.getOptionValue("i").getBytes();
-      pskKey = Hex.decodeHex(cl.getOptionValue("p").toCharArray());
-    }
+    byte[] pskIdentity = getPskIdentity(cl);
+    byte[] pskKey = getPskKey(cl);
 
     // get RPK info
     PublicKey clientPublicKey = null;
@@ -222,18 +113,13 @@ public class LeshanClientDemo {
     }
 
     // get local address
-    String localAddress = null;
-    int localPort = 0;
-    if (cl.hasOption("lh")) {
-      localAddress = cl.getOptionValue("lh");
-    }
-    if (cl.hasOption("lp")) {
-      localPort = Integer.parseInt(cl.getOptionValue("lp"));
-    }
+    String localAddress = getLocalAdress(cl);
+    int localPort = getLocalPort(cl);
 
     Float latitude = null;
     Float longitude = null;
-    Float scaleFactor = 1.0f;
+    float scaleFactor = 1.0f;
+
     // get initial Location
     if (cl.hasOption("pos")) {
       try {
@@ -256,7 +142,7 @@ public class LeshanClientDemo {
     }
     if (cl.hasOption("sf")) {
       try {
-        scaleFactor = Float.valueOf(cl.getOptionValue("sf"));
+        scaleFactor = Float.parseFloat(cl.getOptionValue("sf"));
       } catch (NumberFormatException e) {
         System.err.println("Scale factor must be a float, e.g. 1.0 or 0.01");
         formatter.printHelp(USAGE, options);
@@ -265,23 +151,249 @@ public class LeshanClientDemo {
     }
 
     createAndStartClient(endpoint, localAddress, localPort, cl.hasOption("b"), serverURI,
-        pskIdentity, pskKey,
-        clientPublicKey, clientPrivateKey, serverPublicKey, latitude, longitude, scaleFactor);
+        pskIdentity, pskKey, clientPublicKey, clientPrivateKey, serverPublicKey, latitude,
+        longitude, scaleFactor);
   }
 
-  public static void createAndStartClient(String endpoint, String localAddress, int localPort,
-      boolean needBootstrap,
-      String serverURI, byte[] pskIdentity, byte[] pskKey, PublicKey clientPublicKey,
-      PrivateKey clientPrivateKey,
-      PublicKey serverPublicKey, Float latitude, Float longitude, float scaleFactor) {
+  private static void createAndStartClient(String endpoint, String localAddress, int localPort,
+      boolean needBootstrap, String serverURI, byte[] pskIdentity, byte[] pskKey,
+      PublicKey clientPublicKey, PrivateKey clientPrivateKey, PublicKey serverPublicKey,
+      Float latitude, Float longitude, float scaleFactor) {
 
-    locationInstance = new MyLocation(latitude, longitude, scaleFactor);
+    MyLocation locationInstance = new MyLocation(latitude, longitude, scaleFactor);
 
     // Initialize model
+    List<ObjectModel> models = getModels();
+
+    // Initialize object list
+    List<LwM2mObjectEnabler> enablers = getEnablers(models, needBootstrap, pskIdentity, serverURI,
+        pskKey, clientPublicKey, clientPrivateKey, serverPublicKey, locationInstance);
+
+    // Create CoAP Config
+    NetworkConfig coapConfig = createCoapConfig();
+
+    final LeshanClient client = getClient(endpoint, localAddress, localPort, enablers, coapConfig);
+
+    // Display client public key to easily add it in Leshan Server Demo
+    printClientPublicKey(clientPublicKey, clientPrivateKey);
+
+    LOG.info("Press 'w','a','s','d' to change reported Location ({},{}).",
+        locationInstance.getLatitude(),
+        locationInstance.getLongitude());
+
+    // Start the client
+    client.start();
+
+    // De-register on shutdown and stop client.
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        client.destroy(true); // send de-registration request before destroy
+      }
+    });
+
+    // Change the location through the Console
+    try (Scanner scanner = new Scanner(System.in)) {
+      while (scanner.hasNext()) {
+        String nextMove = scanner.next();
+        locationInstance.moveLocation(nextMove);
+      }
+    }
+  }
+
+  private static Options defineCommandLineOptions() {
+    Options options = new Options();
+
+    options.addOption("h", "help", false, "Display help information.");
+    options.addOption("n", true, String
+        .format("Set the endpoint name of the Client.\nDefault: the local hostname or '%s' if any.",
+            DEFAULT_ENDPOINT));
+    options.addOption("b", false, "If present use bootstrap.");
+    options.addOption("lh", true,
+        "Set the local CoAP address of the Client.\n  Default: any local address.");
+    options.addOption("lp", true,
+        "Set the local CoAP port of the Client.\n  Default: A valid port value is between 0 and 65535.");
+    options.addOption("u", true, String
+        .format("Set the LWM2M or Bootstrap server URL.\nDefault: localhost:%d.",
+            LwM2m.DEFAULT_COAP_PORT));
+    options.addOption("pos", true,
+        "Set the initial location (latitude, longitude) of the device to be reported by the Location object.\n Format: lat_float:long_float");
+    options.addOption("sf", true,
+        "Scale factor to apply when shifting position.\n Default is 1.0." + getPSKChapter());
+    options.addOption("i", true, "Set the LWM2M or Bootstrap server PSK identity in ascii.");
+    options.addOption("p", true,
+        "Set the LWM2M or Bootstrap server Pre-Shared-Key in hexa." + getRPKChapter());
+    options.addOption("cpubk", true,
+        "The path to your client public key file.\n The public Key should be in SubjectPublicKeyInfo format (DER encoding).");
+    options.addOption("cprik", true,
+        "The path to your client private key file.\nThe private key should be in PKCS#8 format (DER encoding).");
+    options.addOption("spubk", true,
+        "The path to your server public key file.\n The public Key should be in SubjectPublicKeyInfo format (DER encoding).");
+
+    return options;
+  }
+
+  private static StringBuilder getPSKChapter() {
+    final StringBuilder PSKChapter = new StringBuilder();
+
+    PSKChapter.append("\n .");
+    PSKChapter.append("\n .");
+    PSKChapter
+        .append("\n ================================[ PSK ]=================================");
+    PSKChapter
+        .append("\n | By default Leshan demo use non secure connection.                    |");
+    PSKChapter
+        .append("\n | To use PSK, -i and -p options should be used together.               |");
+    PSKChapter
+        .append("\n ------------------------------------------------------------------------");
+
+    return PSKChapter;
+  }
+
+  private static StringBuilder getRPKChapter() {
+    final StringBuilder RPKChapter = new StringBuilder();
+
+    RPKChapter.append("\n .");
+    RPKChapter.append("\n .");
+    RPKChapter
+        .append("\n ================================[ RPK ]=================================");
+    RPKChapter
+        .append("\n | By default Leshan demo use non secure connection.                    |");
+    RPKChapter
+        .append("\n | To use RPK, -cpubk -cpribk -spubk options should be used together.   |");
+    RPKChapter
+        .append("\n | To get helps about files format and how to generate it, see :        |");
+    RPKChapter
+        .append("\n | See https://github.com/eclipse/leshan/wiki/Credential-files-format   |");
+    RPKChapter
+        .append("\n ------------------------------------------------------------------------");
+
+    return RPKChapter;
+  }
+
+  private static boolean commandLineCheck(CommandLine cl, HelpFormatter formatter,
+      Options options) {
+    // Print help
+    if (cl.hasOption("help")) {
+      formatter.printHelp(USAGE, options);
+      return false;
+    }
+
+    // Abort if unexpected options
+    if (cl.getArgs().length > 0) {
+      System.err.println("Unexpected option or arguments : " + cl.getArgList());
+      formatter.printHelp(USAGE, options);
+      return false;
+    }
+
+    // Abort if PSK config is not complete
+    if ((cl.hasOption("i") && !cl.hasOption("p")) || !cl.hasOption("i") && cl.hasOption("p")) {
+      System.err
+          .println(
+              "You should precise identity (-i) and Pre-Shared-Key (-p) if you want to connect in PSK");
+      formatter.printHelp(USAGE, options);
+      return false;
+    }
+
+    // Abort if all RPK config is not complete
+    if (cl.hasOption("cpubk") || cl.hasOption("cprik") || cl.hasOption("spubk")) {
+      if (!cl.hasOption("cpubk") || !cl.hasOption("cprik") || !cl.hasOption("spubk")) {
+        System.err.println("cpubk, cprik and spubk should be used together to connect using RPK");
+        formatter.printHelp(USAGE, options);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static String getEndpointName(CommandLine cl) {
+    String endpoint;
+
+    if (cl.hasOption("n")) {
+      endpoint = cl.getOptionValue("n");
+    } else {
+      try {
+        endpoint = InetAddress.getLocalHost().getHostName();
+      } catch (UnknownHostException e) {
+        endpoint = DEFAULT_ENDPOINT;
+      }
+    }
+
+    return endpoint;
+  }
+
+  private static String getServerUrl(CommandLine cl) {
+    String serverURI;
+
+    if (cl.hasOption("u")) {
+      if (cl.hasOption("i") || cl.hasOption("cpubk")) {
+        serverURI = "coaps://" + cl.getOptionValue("u");
+      } else {
+        serverURI = "coap://" + cl.getOptionValue("u");
+      }
+    } else {
+      if (cl.hasOption("i") || cl.hasOption("cpubk")) {
+        serverURI = "coaps://localhost:" + LwM2m.DEFAULT_COAP_SECURE_PORT;
+      } else {
+        serverURI = "coap://localhost:" + LwM2m.DEFAULT_COAP_PORT;
+      }
+    }
+
+    return serverURI;
+  }
+
+  private static byte[] getPskIdentity(CommandLine cl) {
+    byte[] pskIdentity = null;
+
+    if (cl.hasOption("i")) {
+      pskIdentity = cl.getOptionValue("i").getBytes();
+    }
+
+    return pskIdentity;
+  }
+
+  private static byte[] getPskKey(CommandLine cl) {
+    byte[] pskKey = null;
+
+    if (cl.hasOption("i")) {
+      pskKey = Hex.decodeHex(cl.getOptionValue("p").toCharArray());
+    }
+
+    return pskKey;
+  }
+
+  private static String getLocalAdress(CommandLine cl) {
+    String localAddress = null;
+
+    if (cl.hasOption("lh")) {
+      localAddress = cl.getOptionValue("lh");
+    }
+
+    return localAddress;
+  }
+
+  private static int getLocalPort(CommandLine cl) {
+    int localPort = 0;
+
+    if (cl.hasOption("lp")) {
+      localPort = Integer.parseInt(cl.getOptionValue("lp"));
+    }
+
+    return localPort;
+  }
+
+  private static List<ObjectModel> getModels() {
     List<ObjectModel> models = ObjectLoader.loadDefault();
     models.addAll(ObjectLoader.loadDdfResources("/models", modelPaths));
 
-    // Initialize object list
+    return models;
+  }
+
+  private static ObjectsInitializer getInitializer(List<ObjectModel> models, boolean needBootstrap,
+      byte[] pskIdentity, String serverURI, byte[] pskKey, PublicKey clientPublicKey,
+      PrivateKey clientPrivateKey, PublicKey serverPublicKey, MyLocation locationInstance) {
+
     ObjectsInitializer initializer = new ObjectsInitializer(new LwM2mModel(models));
     if (needBootstrap) {
       if (pskIdentity != null) {
@@ -313,10 +425,22 @@ public class LeshanClientDemo {
     initializer.setClassForObject(DEVICE, MyDevice.class);
     initializer.setInstancesForObject(LOCATION, locationInstance);
     initializer.setInstancesForObject(OBJECT_ID_TEMPERATURE_SENSOR, new RandomTemperatureSensor());
-    List<LwM2mObjectEnabler> enablers = initializer.create(SECURITY, SERVER, DEVICE, LOCATION,
-        OBJECT_ID_TEMPERATURE_SENSOR);
 
-    // Create CoAP Config
+    return initializer;
+  }
+
+  private static List<LwM2mObjectEnabler> getEnablers(List<ObjectModel> models,
+      boolean needBootstrap, byte[] pskIdentity, String serverURI, byte[] pskKey,
+      PublicKey clientPublicKey, PrivateKey clientPrivateKey, PublicKey serverPublicKey,
+      MyLocation locationInstance) {
+
+    ObjectsInitializer initializer = getInitializer(models, needBootstrap, pskIdentity, serverURI,
+        pskKey, clientPublicKey, clientPrivateKey, serverPublicKey, locationInstance);
+
+    return initializer.create(SECURITY, SERVER, DEVICE, LOCATION, OBJECT_ID_TEMPERATURE_SENSOR);
+  }
+
+  private static NetworkConfig createCoapConfig() {
     NetworkConfig coapConfig;
     File configFile = new File(NetworkConfig.DEFAULT_FILE_NAME);
     if (configFile.isFile()) {
@@ -327,18 +451,25 @@ public class LeshanClientDemo {
       coapConfig.store(configFile);
     }
 
-    // Create client
+    return coapConfig;
+  }
+
+  private static LeshanClient getClient(String endpoint, String localAddress, int localPort,
+      List<LwM2mObjectEnabler> enablers, NetworkConfig coapConfig) {
+
     LeshanClientBuilder builder = new LeshanClientBuilder(endpoint);
     builder.setLocalAddress(localAddress, localPort);
     builder.setObjects(enablers);
     builder.setCoapConfig(coapConfig);
-    final LeshanClient client = builder.build();
 
+    return builder.build();
+  }
+
+  private static void printClientPublicKey(PublicKey clientPublicKey, PrivateKey clientPrivateKey) {
     // Display client public key to easily add it in Leshan Server Demo
     if (clientPublicKey != null) {
-      PublicKey rawPublicKey = clientPublicKey;
-      if (rawPublicKey instanceof ECPublicKey) {
-        ECPublicKey ecPublicKey = (ECPublicKey) rawPublicKey;
+      if (clientPublicKey instanceof ECPublicKey) {
+        ECPublicKey ecPublicKey = (ECPublicKey) clientPublicKey;
         // Get x coordinate
         byte[] x = ecPublicKey.getW().getAffineX().toByteArray();
         if (x[0] == 0) {
@@ -357,35 +488,12 @@ public class LeshanClientDemo {
         LOG.info(
             "Client uses RPK : \n Elliptic Curve parameters  : {} \n Public x coord : {} \n Public y coord : {} \n Public Key (Hex): {} \n Private Key (Hex): {}",
             params, Hex.encodeHexString(x), Hex.encodeHexString(y),
-            Hex.encodeHexString(rawPublicKey.getEncoded()),
+            Hex.encodeHexString(clientPublicKey.getEncoded()),
             Hex.encodeHexString(clientPrivateKey.getEncoded()));
 
       } else {
         throw new IllegalStateException(
             "Unsupported Public Key Format (only ECPublicKey supported).");
-      }
-    }
-
-    LOG.info("Press 'w','a','s','d' to change reported Location ({},{}).",
-        locationInstance.getLatitude(),
-        locationInstance.getLongitude());
-
-    // Start the client
-    client.start();
-
-    // De-register on shutdown and stop client.
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        client.destroy(true); // send de-registration request before destroy
-      }
-    });
-
-    // Change the location through the Console
-    try (Scanner scanner = new Scanner(System.in)) {
-      while (scanner.hasNext()) {
-        String nextMove = scanner.next();
-        locationInstance.moveLocation(nextMove);
       }
     }
   }
