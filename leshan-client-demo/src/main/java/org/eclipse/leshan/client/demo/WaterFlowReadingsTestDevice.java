@@ -1,9 +1,14 @@
 package org.eclipse.leshan.client.demo;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
+import org.eclipse.leshan.core.model.ObjectModel;
+import org.eclipse.leshan.core.node.LwM2mResource;
 import org.eclipse.leshan.core.response.ExecuteResponse;
 import org.eclipse.leshan.core.response.ReadResponse;
+import org.eclipse.leshan.core.response.WriteResponse;
 
 /**
  * Represents a water flow sensor that measures the flow of water in regular intervals. ( test
@@ -163,8 +168,30 @@ public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
    */
   private static final int LATEST_PAYLOAD = 6029;
 
+  /**
+   * The list of resources that the server can request.
+   */
+  private static final List<Integer> SUPPORTED_RESOURCES = Arrays.asList(
+      INTERVAL_PERIOD,
+      INTERVAL_START_OFFSET,
+      INTERVAL_UTC_OFFSET,
+      INTERVAL_COLLECTION_START_TIME,
+      OLDEST_RECORDED_INTERVAL,
+      LAST_DELIVERED_INTERVAL,
+      LATEST_RECORDED_INTERVAL,
+      INTERVAL_DELIVERY_MIDNIGHT_ALIGNED,
+      INTERVAL_HISTORICAL_READ,
+      INTERVAL_HISTORICAL_READ_PAYLOAD,
+      INTERVAL_RANGE_CONFIGURATION,
+      START,
+      STOP,
+      STATUS,
+      LATEST_PAYLOAD
+  );
+
   @Override
   public synchronized ReadResponse read(int resourceId) {
+    System.out.println("Read....");
     switch (resourceId) {
       case INTERVAL_PERIOD:
         return ReadResponse.success(resourceId, this.getIntervalPeriod());
@@ -205,6 +232,11 @@ public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
   }
 
   @Override
+  public WriteResponse write(int resourceId, LwM2mResource value) {
+    return super.write(resourceId, value);
+  }
+
+  @Override
   public ExecuteResponse execute(int resourceId, String params) {
     switch (resourceId) {
       case START:
@@ -226,6 +258,11 @@ public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
       default:
         return super.execute(resourceId, params);
     }
+  }
+
+  @Override
+  public List<Integer> getAvailableResourceIds(ObjectModel model) {
+    return SUPPORTED_RESOURCES;
   }
 
   private void start() {
@@ -281,7 +318,7 @@ public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
   }
 
   private int getStatus() {
-    return 0;
+    return 1;
   }
 
   private byte[] getLatestPayload() {
