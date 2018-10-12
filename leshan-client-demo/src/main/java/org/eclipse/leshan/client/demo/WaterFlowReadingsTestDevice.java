@@ -13,6 +13,8 @@ import org.eclipse.leshan.core.response.WriteResponse;
 /**
  * Represents a water flow sensor that measures the flow of water in regular intervals. ( test
  * device ! )
+ *
+ * @author Lars Bremen
  */
 public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
 
