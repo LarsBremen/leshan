@@ -12,7 +12,6 @@
  *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
- *     Lars Bremen - comments
  *******************************************************************************/
 package org.eclipse.leshan.core.node;
 
