@@ -55,9 +55,14 @@ public class LeshanClientDemo {
 
   private static final Logger LOG = LoggerFactory.getLogger(LeshanClientDemo.class);
 
-  private final static String[] modelPaths = new String[]{"3303.xml", "10266.xml"};
+  private final static String[] modelPaths = new String[]{
+      "3303.xml", "3304.xml", "10266.xml"
+  };
 
   private static final int OBJECT_ID_TEMPERATURE_SENSOR = 3303;
+  private static final int OBJECT_ID_WATER_FLOW_SENSOR = 10266;
+  private static final int OBJECT_ID_HUMIDITY_SENSOR = 3304;
+
   private final static String DEFAULT_ENDPOINT = "LeshanClientDemo";
   private final static String USAGE = "java -jar leshan-client-demo.jar [OPTION]\n\n";
 
@@ -113,7 +118,7 @@ public class LeshanClientDemo {
     }
 
     // get local address
-    String localAddress = getLocalAdress(cl);
+    String localAddress = getLocalAddress(cl);
     int localPort = getLocalPort(cl);
 
     Float latitude = null;
@@ -363,7 +368,7 @@ public class LeshanClientDemo {
     return pskKey;
   }
 
-  private static String getLocalAdress(CommandLine cl) {
+  private static String getLocalAddress(CommandLine cl) {
     String localAddress = null;
 
     if (cl.hasOption("lh")) {
@@ -422,10 +427,14 @@ public class LeshanClientDemo {
         initializer.setInstancesForObject(SERVER, new Server(123, 30, BindingMode.U, false));
       }
     }
+
+    // ----------------------------- Initialise devices --------------------------------------------
     initializer.setClassForObject(DEVICE, MyDevice.class);
     initializer.setInstancesForObject(LOCATION, locationInstance);
     initializer.setInstancesForObject(OBJECT_ID_TEMPERATURE_SENSOR, new RandomTemperatureSensor());
-
+    initializer.setInstancesForObject(OBJECT_ID_WATER_FLOW_SENSOR, new WaterFlowSensor());
+    initializer.setInstancesForObject(OBJECT_ID_HUMIDITY_SENSOR, new HumiditySensor());
+    // ---------------------------------------------------------------------------------------------
     return initializer;
   }
 
@@ -437,7 +446,12 @@ public class LeshanClientDemo {
     ObjectsInitializer initializer = getInitializer(models, needBootstrap, pskIdentity, serverURI,
         pskKey, clientPublicKey, clientPrivateKey, serverPublicKey, locationInstance);
 
-    return initializer.create(SECURITY, SERVER, DEVICE, LOCATION, OBJECT_ID_TEMPERATURE_SENSOR);
+    // ---------------------------------- Create devices -------------------------------------------
+    return initializer.create(
+        SECURITY, SERVER, DEVICE, LOCATION, OBJECT_ID_TEMPERATURE_SENSOR,
+        OBJECT_ID_WATER_FLOW_SENSOR, OBJECT_ID_HUMIDITY_SENSOR
+    );
+    // ---------------------------------------------------------------------------------------------
   }
 
   private static NetworkConfig createCoapConfig() {
@@ -486,10 +500,16 @@ public class LeshanClientDemo {
         String params = ecPublicKey.getParams().toString();
 
         LOG.info(
-            "Client uses RPK : \n Elliptic Curve parameters  : {} \n Public x coord : {} \n Public y coord : {} \n Public Key (Hex): {} \n Private Key (Hex): {}",
+            "Client uses RPK : \n" +
+            "Elliptic Curve parameters  : {} \n" +
+            "Public x coord : {} \n" +
+            "Public y coord : {} \n" +
+            "Public Key (Hex): {} \n" +
+            "Private Key (Hex): {}",
             params, Hex.encodeHexString(x), Hex.encodeHexString(y),
             Hex.encodeHexString(clientPublicKey.getEncoded()),
-            Hex.encodeHexString(clientPrivateKey.getEncoded()));
+            Hex.encodeHexString(clientPrivateKey.getEncoded())
+        );
 
       } else {
         throw new IllegalStateException(
