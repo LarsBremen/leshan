@@ -3,6 +3,7 @@ package org.eclipse.leshan.client.demo;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
 import org.eclipse.leshan.core.model.ObjectModel;
 import org.eclipse.leshan.core.node.LwM2mResource;
@@ -11,10 +12,9 @@ import org.eclipse.leshan.core.response.ReadResponse;
 import org.eclipse.leshan.core.response.WriteResponse;
 
 /**
- * Represents a water flow sensor that measures the flow of water in regular intervals. ( test
- * device ! )
+ * Represents a water flow sensor that measures the flow of water in regular intervals.
  */
-public class WaterFlowReadingsTestDevice extends BaseInstanceEnabler {
+public class WaterFlowSensor extends BaseInstanceEnabler {
 
   /**
    * The Interval Period resource is an Integer value representing the width in seconds of the
