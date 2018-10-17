@@ -18,22 +18,30 @@ import org.eclipse.leshan.util.NamedThreadFactory;
 public class RandomTemperatureSensor extends BaseInstanceEnabler {
 
   private static final String UNIT_CELSIUS = "cel";
+
   private static final int SENSOR_VALUE = 5700;
+
   private static final int UNITS = 5701;
+
   private static final int MAX_MEASURED_VALUE = 5602;
+
   private static final int MIN_MEASURED_VALUE = 5601;
+
   private static final int RESET_MIN_MAX_MEASURED_VALUES = 5605;
-  private static final List<Integer> supportedResources = Arrays
-      .asList(SENSOR_VALUE, UNITS, MAX_MEASURED_VALUE,
-          MIN_MEASURED_VALUE, RESET_MIN_MAX_MEASURED_VALUES);
-  private final ScheduledExecutorService scheduler;
+
+  private static final List<Integer> supportedResources = Arrays.asList(SENSOR_VALUE, UNITS,
+      MAX_MEASURED_VALUE, MIN_MEASURED_VALUE, RESET_MIN_MAX_MEASURED_VALUES);
+
   private final Random rng = new Random();
+
   private double currentTemp = 20d;
+
   private double minMeasuredValue = currentTemp;
+
   private double maxMeasuredValue = currentTemp;
 
-  public RandomTemperatureSensor() {
-    this.scheduler = Executors
+  RandomTemperatureSensor() {
+    ScheduledExecutorService scheduler = Executors
         .newSingleThreadScheduledExecutor(new NamedThreadFactory("Temperature Sensor"));
     scheduler.scheduleAtFixedRate(new Runnable() {
 

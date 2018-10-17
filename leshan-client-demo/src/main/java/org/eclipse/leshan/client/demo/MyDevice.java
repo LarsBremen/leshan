@@ -200,11 +200,11 @@ public class MyDevice extends BaseInstanceEnabler {
    * Method to test the opaque data type transfer.
    * @return ObjectLink link wit a random object.
    */
-  private ObjectLink getTestOpaque() {
+  private byte[] getTestOpaque() {
     LwM2mObject test = new LwM2mObject(1, new LwM2mObjectInstance(1,
         LwM2mSingleResource.newResource(1, "a".getBytes(), Type.OPAQUE)));
-
-    return new ObjectLink(test.getId(), test.getInstance(1).getId());
+    //return new ObjectLink(test.getId(), test.getInstance(1).getId());
+    return "a".getBytes();
   }
 
   @Override

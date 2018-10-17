@@ -349,7 +349,7 @@ Status	Meaning	Description
         <Operations>R</Operations>
         <MultipleInstances>Single</MultipleInstances>
         <Mandatory>Optional</Mandatory>
-        <Type>Objlnk</Type>
+        <Type>Opaque</Type>
         <RangeEnumeration></RangeEnumeration>
         <Units></Units>
         <Description>

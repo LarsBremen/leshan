@@ -81,8 +81,7 @@ public class ObjectResource extends CoapResource implements NotifySender {
   private final LwM2mNodeDecoder decoder;
 
   public ObjectResource(LwM2mObjectEnabler nodeEnabler, BootstrapHandler bootstrapHandler,
-      LwM2mNodeEncoder encoder,
-      LwM2mNodeDecoder decoder) {
+      LwM2mNodeEncoder encoder, LwM2mNodeDecoder decoder) {
     super(Integer.toString(nodeEnabler.getId()));
     this.nodeEnabler = nodeEnabler;
     this.nodeEnabler.setNotifySender(this);

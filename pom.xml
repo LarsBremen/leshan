@@ -265,7 +265,7 @@ Contributors:
             <target>1.7</target>
             <debug>true</debug>
             <optimize>true</optimize>
-            <showDeprecations>true</showDeprecations>
+            <!--showDeprecations>true</showDeprecations-->
           </configuration>
         </plugin>
         <plugin>

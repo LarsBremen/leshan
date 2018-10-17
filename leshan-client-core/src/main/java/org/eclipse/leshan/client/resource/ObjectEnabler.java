@@ -115,7 +115,7 @@ public class ObjectEnabler extends BaseObjectEnabler {
     listenInstance(newInstance, instanceId);
 
     return CreateResponse
-        .success(new LwM2mPath(request.getPath().getObjectId(), instanceId).toString());
+          .success(new LwM2mPath(request.getPath().getObjectId(), instanceId).toString());
   }
 
   @Override

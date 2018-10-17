@@ -26,6 +26,9 @@ import org.eclipse.leshan.core.node.LwM2mSingleResource;
 import org.eclipse.leshan.core.node.ObjectLink;
 import org.eclipse.leshan.core.request.exception.InvalidResponseException;
 
+/**
+ * A LwM2m response to be returned on a read.
+ */
 public class ReadResponse extends AbstractLwM2mResponse {
 
   protected final LwM2mNode content;
@@ -34,6 +37,13 @@ public class ReadResponse extends AbstractLwM2mResponse {
     this(code, content, errorMessage, null);
   }
 
+  /**
+   * Constructor.
+   * @param code ResponseCode
+   * @param content LwM2mNode
+   * @param errorMessage String
+   * @param coapResponse Object
+   */
   public ReadResponse(ResponseCode code, LwM2mNode content, String errorMessage,
       Object coapResponse) {
     super(code, errorMessage, coapResponse);

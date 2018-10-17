@@ -33,9 +33,10 @@ public class ObserveResponse extends ReadResponse {
   private final Observation observation;
   private final List<TimestampedLwM2mNode> timestampedValues;
 
-  public ObserveResponse(ResponseCode code, LwM2mNode content,
-      List<TimestampedLwM2mNode> timestampedValues,
-      Observation observation, String errorMessage) {
+  public ObserveResponse(
+      ResponseCode code, LwM2mNode content, List<TimestampedLwM2mNode> timestampedValues,
+      Observation observation, String errorMessage
+  ) {
     this(code, content, timestampedValues, observation, errorMessage, null);
   }
 
