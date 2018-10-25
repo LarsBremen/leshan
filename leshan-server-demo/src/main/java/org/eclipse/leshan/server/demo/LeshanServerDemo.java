@@ -103,7 +103,7 @@ public class LeshanServerDemo {
   private final static String[] modelPaths = new String[]{"31024.xml",
 
       "10241.xml", "10242.xml", "10243.xml", "10244.xml", "10245.xml", "10246.xml", "10247.xml",
-      "10248.xml", "10249.xml", "10250.xml",
+      "10248.xml", "10249.xml", "10250.xml", "10266.xml",
 
       "2048.xml", "2049.xml", "2050.xml", "2051.xml", "2052.xml", "2053.xml", "2054.xml",
       "2055.xml", "2056.xml", "2057.xml",
